@@ -20,7 +20,7 @@ Phase 1 only: scaffold, local Supabase, profiles + roles + RLS, auth (login, reg
 - [x] T2 Local Supabase: `supabase init`, config, `@supabase/ssr` clients (server/browser/middleware), env validation
 - [x] T3 Schema + RLS: migration for `profiles` (role, status pending/approved/rejected, CUIT, tax condition), trigger on `auth.users`, RLS policies, seed admin; SQL tests
 - [x] T4 Auth + role shells: login, register (pending approval), middleware guards, `/admin` and `/tienda` placeholder layouts, tests
-- [ ] T5 CI: GitHub Actions (lint, typecheck, unit tests, supabase db tests)
+- [x] T5 CI: GitHub Actions (lint, typecheck, unit tests, supabase db tests) — `.github/workflows/ci.yml`: job `app` (format:check, lint, typecheck, test, build with placeholder env) and job `database` (db:start, db:reset, db:test). Prettier-clean; NOT yet run on GitHub (needs a pushed repo). Risk: item 5 (CI).
 - [x] T6 Design tokens: `DESIGN.md` + Tailwind tokens from `public/mhk logo.png` via impeccable, applied to login and shells (commits ddfdaf0, 1cad58f, 2242677; finish review: fix round then verdict ship over the 8 scored fixes; DESIGN.md + .impeccable/design.json written; known drift recorded in DESIGN.md: orange tab marker 2.47:1 on the light ground; minor: registro reserved alert slot ~100px gap, truncated admin email on mobile)
 
 ## Route per task
