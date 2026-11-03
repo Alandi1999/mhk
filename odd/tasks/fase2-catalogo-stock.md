@@ -15,7 +15,7 @@ Mirror: Engram topic `odd/fase2-catalogo-stock/tasks` (project mhk). Mirror stat
 ## Tasks
 
 - [x] T1 (S1,S3,S4,S5) Schema + RLS + pgTAP: categories, products, product_compatibility, product_images, stock_movements + trigger, storage bucket policies. Route: inline. High risk (migration/RLS): own commit, native review candidate. Evidence: migration `20260201000000_catalog_stock.sql` + `catalog_stock.test.sql` (29 pgTAP, 53 total pass), types regenerated, typecheck/lint/format ok. Tests were written after the migration (no RED observed). Risk: item 1 and 2 (migration, RLS).
-- [ ] T2 (S1,S3) Domain libs: Zod schemas, SKU normalization, money/VAT helpers, search-query parsing, CSV parser/validator (pure, tested first).
+- [x] T2 (S1,S3) Domain libs: Zod schemas, SKU normalization, money/VAT helpers, search-query parsing, CSV parser/validator (pure, tested first). Route: inline. Evidence: RED observed (unresolved imports), GREEN 15 tests (126 total), typecheck/lint/format ok. `src/lib/catalog/{sku,money,search,csv,schemas}.ts`. Risk: none.
 - [ ] T3 (S5) Admin categories and products CRUD + image upload.
 - [ ] T4 (S4,S5) Admin stock: record movements, history per product.
 - [ ] T5 (S2,S5) Admin CSV import (products, stock adjustments) with row-level error report.
