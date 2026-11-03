@@ -16,6 +16,13 @@ const FILTERS = [
 
 type Filter = (typeof FILTERS)[number]["value"];
 
+const ACTION_ERRORS: Record<string, string> = {
+  "no-actualizado":
+    "No se pudo actualizar el cliente. Puede que no tengas permiso o que ya haya cambiado. Recargá e intentá de nuevo.",
+  propio: "No podés cambiar el estado de tu propia cuenta.",
+  invalido: "La solicitud no es válida. Recargá la página e intentá de nuevo.",
+};
+
 function parseFilter(value: string | string[] | undefined): Filter {
   return FILTERS.find((f) => f.value === value)?.value ?? "pending";
 }
@@ -24,7 +31,9 @@ export default async function ClientsPage({
   searchParams,
 }: PageProps<"/admin/clientes">) {
   const admin = await requireProfile({ role: "admin" });
-  const estado = parseFilter((await searchParams).estado);
+  const params = await searchParams;
+  const estado = parseFilter(params.estado);
+  const actionError = typeof params.error === "string" ? params.error : null;
 
   const supabase = await createClient();
   const { data: clients, error } = await supabase
@@ -50,6 +59,15 @@ export default async function ClientsPage({
           </Link>
         ))}
       </nav>
+
+      <div role="alert" aria-live="assertive">
+        {actionError ? (
+          <p>
+            {ACTION_ERRORS[actionError] ??
+              "No se pudo completar la acción. Probá de nuevo."}
+          </p>
+        ) : null}
+      </div>
 
       {error ? (
         <p role="alert">No pudimos cargar los clientes. Probá de nuevo.</p>
@@ -95,6 +113,7 @@ export default async function ClientsPage({
                       {c.status !== "approved" && c.id !== admin.id ? (
                         <form action={approveClient}>
                           <input type="hidden" name="id" value={c.id} />
+                          <input type="hidden" name="estado" value={estado} />
                           <Button type="submit" size="sm">
                             Aprobar
                           </Button>
@@ -103,6 +122,7 @@ export default async function ClientsPage({
                       {c.status !== "rejected" && c.id !== admin.id ? (
                         <form action={rejectClient}>
                           <input type="hidden" name="id" value={c.id} />
+                          <input type="hidden" name="estado" value={estado} />
                           <Button type="submit" size="sm" variant="outline">
                             Rechazar
                           </Button>
