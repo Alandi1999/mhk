@@ -5,7 +5,8 @@ import { getPublicEnv } from "@/lib/env";
 
 /**
  * Refreshes the Supabase auth session and forwards the updated cookies.
- * Route guards (roles, approval status) are intentionally not handled here.
+ * Returns the verified user id (from validated JWT claims) so the proxy can
+ * apply the access policy. Route guards live in `src/proxy.ts`.
  */
 export async function updateSession(request: NextRequest) {
   const env = getPublicEnv();
@@ -34,7 +35,8 @@ export async function updateSession(request: NextRequest) {
 
   // Do not run code between createServerClient and getClaims(): it validates
   // the token and triggers the refresh.
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+  const userId = data?.claims?.sub ?? null;
 
-  return { response, supabase };
+  return { response, supabase, userId };
 }
