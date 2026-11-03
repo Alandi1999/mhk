@@ -9,4 +9,11 @@ describe("Button", () => {
       screen.getByRole("button", { name: "Ingresar" }),
     ).toBeInTheDocument();
   });
+
+  it("is disabled and marked busy while loading", () => {
+    render(<Button loading>Ingresando...</Button>);
+    const button = screen.getByRole("button", { name: "Ingresando..." });
+    expect(button).toBeDisabled();
+    expect(button).toHaveAttribute("aria-busy", "true");
+  });
 });

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { FormAlert } from "@/components/auth/form-alert";
 import { FormField } from "@/components/auth/form-field";
 import { Button } from "@/components/ui/button";
 import { login, type FormState } from "@/lib/auth/actions";
@@ -12,15 +13,9 @@ export function LoginForm({ next }: { next: string | null }) {
   const [state, action, pending] = useActionState(login, initialState);
 
   return (
-    <form action={action} className="flex flex-col gap-4" noValidate>
+    <form action={action} className="flex flex-col gap-2" noValidate>
       {next ? <input type="hidden" name="next" value={next} /> : null}
-      <div
-        role="alert"
-        aria-live="assertive"
-        className="text-sm text-destructive"
-      >
-        {state.error}
-      </div>
+      <FormAlert>{state.error}</FormAlert>
       <FormField
         name="email"
         type="email"
@@ -37,10 +32,10 @@ export function LoginForm({ next }: { next: string | null }) {
         required
         error={state.fieldErrors?.password}
       />
-      <Button type="submit" disabled={pending}>
+      <Button type="submit" size="lg" loading={pending} className="mt-1">
         {pending ? "Ingresando..." : "Ingresar"}
       </Button>
-      <p className="text-sm">
+      <p className="text-sm text-ink-muted">
         ¿Todavía no tenés cuenta? <Link href="/registro">Registrate</Link>
       </p>
     </form>

@@ -21,11 +21,12 @@ Phase 1 only: scaffold, local Supabase, profiles + roles + RLS, auth (login, reg
 - [x] T3 Schema + RLS: migration for `profiles` (role, status pending/approved/rejected, CUIT, tax condition), trigger on `auth.users`, RLS policies, seed admin; SQL tests
 - [x] T4 Auth + role shells: login, register (pending approval), middleware guards, `/admin` and `/tienda` placeholder layouts, tests
 - [ ] T5 CI: GitHub Actions (lint, typecheck, unit tests, supabase db tests)
-- [ ] T6 Design tokens: `DESIGN.md` + Tailwind tokens from `public/mhk logo.png` via impeccable, applied to login and shells
+- [ ] T6 Design tokens: `DESIGN.md` + Tailwind tokens from `public/mhk logo.png` via impeccable, applied to login and shells (implementation + checks done; pending: finish review and DESIGN.md by the parent/documenter)
 
 ## Route per task
 Recorded as tasks start (inline vs delegated, with trigger evidence).
 - T1+T2: delegated direct, one writer (writer trigger: 2+ non-trivial files, scaffolding + dependency installs).
+- T6: delegated direct writer (trigger: 2+ non-trivial files, ~30 files touched).
 
 ## Progress / evidence
 - Branch `feat/fase1-fundaciones` created. Git identity set repo-locally (alandi1999 / alandiofficial@gmail.com).
@@ -43,6 +44,9 @@ Recorded as tasks start (inline vs delegated, with trigger evidence).
 
 - T4 commits: 880fad5, 8c651ca. Native review: risk high, review granted by the user; candidate = T4 range (32 files, 1227 lines, base b331730) reviewed with 4 lenses on an ext4 clone (`~/mhk-review`) because the Linux gentle-ai timed out on /mnt/c and the Windows build cannot launch the WSL-only `claude`. Outcome: approved and acknowledged (authority burned), security lens had no findings. The 9 advisory findings are follow-ups (below). T3 (RLS/migration) and the scaffold were never reviewed alone: the 9883-line range exceeded the lens context budget.
 - Advisory follow-ups from review (non-blocking): approve/reject action ignores the update error and fails silently (R3/R4, `src/app/admin/clientes/actions.ts`); possible redirect loop with a revoked session (`src/lib/auth/access.ts:49-54`); pending page admin-gate behaviour (`src/app/cuenta/pendiente/page.tsx`); `actions.ts` untested; readability nits in `safe-next.ts`, `session.ts`, `schemas.ts`.
+
+- T6 implementation (commit pending, parent commits): tokens in `src/app/globals.css`, Archivo (wdth axis) + Geist Mono, shell components in `src/components/shell/`, restyled ui/button|input|label + new select, auth shell for /, /login, /registro, /cuenta/pendiente, branded headers for /admin and /tienda, responsive clients table (table from lg, stacked rows below). Styling exempt from RED/GREEN; status badge test written first (RED: unresolved import, then GREEN), button loading test added. Checks: lint, typecheck, format:check, build ok; 94 tests pass. Detector: no findings. Screenshots in `.impeccable/review/` (login, login-errors, registro, registro-errors, admin, admin-clientes, admin-clientes-aprobados, tienda, cuenta-pendiente; desktop+mobile; zero horizontal overflow measured). Pending: finish review, DESIGN.md.
+- Seed note: seeded users have non-RFC4122 UUIDs, so `z.uuid()` in the approve action rejects them (`error=invalido`); real signups work.
 
 ## Next step
 T5 (CI) and T6 (design). Fix the approve/reject error handling first (small).

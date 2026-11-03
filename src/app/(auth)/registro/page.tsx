@@ -1,17 +1,20 @@
 import type { Metadata } from "next";
 import { RegisterForm } from "@/components/auth/register-form";
+import { AuthShell } from "@/components/shell/auth-shell";
 
 export const metadata: Metadata = { title: "Registro | MHK Moto Repuestos" };
 
 export default function RegisterPage() {
   return (
-    <main className="mx-auto flex w-full max-w-md flex-1 flex-col justify-center gap-6 p-6">
-      <h1 className="text-2xl font-bold">Crear cuenta</h1>
-      <p className="text-sm text-muted-foreground">
-        Tienda mayorista: validamos los datos de cada comercio antes de
-        habilitar el acceso.
-      </p>
+    <AuthShell width="md">
+      <div className="flex flex-col gap-2">
+        <h1 className="font-display-wide text-3xl text-ink">Crear cuenta</h1>
+        <p className="max-w-[65ch] text-sm text-ink-muted">
+          Tienda mayorista: validamos los datos de cada comercio antes de
+          habilitar el acceso.
+        </p>
+      </div>
       <RegisterForm />
-    </main>
+    </AuthShell>
   );
 }
