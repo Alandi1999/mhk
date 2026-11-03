@@ -1,0 +1,221 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/*
+ * Design tokens. Light theme only. Every colour lives on :root as a semantic
+ * variable so a second theme can later override the same names under a
+ * [data-theme] selector without touching components.
+ *
+ * Brand colours are sampled from public/mhk logo.png.
+ * Contrast (WCAG 2.x), computed:
+ *   ink on ground 16.99 | ink on surface 18.86 | ink-muted on ground 7.13
+ *   black on brand-orange 7.65 | black on brand-orange-strong 6.36
+ *   black on brand-amber 10.37 | link on surface 5.83 | link on ground 5.25
+ *   silver on black 8.04 | white on black 21.00 | amber (focus) on black 10.37
+ *   input border on surface 3.40 | danger on surface 6.57
+ *   success/warning/danger text on their tints >= 7.38
+ */
+:root {
+  color-scheme: light;
+
+  /* Surfaces */
+  --ground: #f2f3f5;
+  --surface: #ffffff;
+  --surface-2: #e9eaed;
+  --band: #000000;
+
+  /* Text */
+  --ink: #111113;
+  --ink-muted: #505156;
+  --ink-on-band: #ffffff;
+  --ink-on-band-muted: #a0a0a2;
+  --ink-on-brand: #000000;
+
+  /* Lines */
+  --rule: #d4d5da;
+  --rule-strong: #8a8b90;
+  --rule-on-band: #3a3a3d;
+
+  /* Brand */
+  --brand-black: #000000;
+  --brand-silver: #a0a0a2;
+  --brand-amber: #f9a427;
+  --brand-orange: #f77817;
+  --brand-orange-strong: #ec6315;
+  --brand-link: #b23f00;
+  --brand-link-hover: #8a3000;
+
+  /* Focus: ink on light grounds, amber inside black bands */
+  --focus: #111113;
+
+  /* Status: text + tint pairs (never colour alone: always paired with text and an icon) */
+  --success: #14532d;
+  --success-tint: #dcf5e4;
+  --warning: #6b3a00;
+  --warning-tint: #ffe9bf;
+  --danger: #b42318;
+  --danger-strong: #8f1d12;
+  --danger-tint: #fde4e1;
+
+  --radius: 0.5rem;
+
+  /* shadcn variables used by src/components/ui/* */
+  --background: var(--ground);
+  --foreground: var(--ink);
+  --card: var(--surface);
+  --card-foreground: var(--ink);
+  --popover: var(--surface);
+  --popover-foreground: var(--ink);
+  --primary: var(--brand-orange);
+  --primary-foreground: var(--ink-on-brand);
+  --secondary: var(--surface-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--surface-2);
+  --muted-foreground: var(--ink-muted);
+  --accent: var(--surface-2);
+  --accent-foreground: var(--ink);
+  --destructive: var(--danger);
+  --border: var(--rule);
+  --input: var(--rule-strong);
+  --ring: var(--focus);
+}
+
+/* Black bands (header, brand panel): focus ring switches to amber. */
+.on-band {
+  --focus: var(--brand-amber);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-band: var(--band);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-on-band: var(--ink-on-band);
+  --color-ink-on-band-muted: var(--ink-on-band-muted);
+  --color-ink-on-brand: var(--ink-on-brand);
+  --color-rule: var(--rule);
+  --color-rule-strong: var(--rule-strong);
+  --color-rule-on-band: var(--rule-on-band);
+  --color-brand-black: var(--brand-black);
+  --color-brand-silver: var(--brand-silver);
+  --color-brand-amber: var(--brand-amber);
+  --color-brand-orange: var(--brand-orange);
+  --color-brand-orange-strong: var(--brand-orange-strong);
+  --color-brand-link: var(--brand-link);
+  --color-brand-link-hover: var(--brand-link-hover);
+  --color-focus: var(--focus);
+  --color-success: var(--success);
+  --color-success-tint: var(--success-tint);
+  --color-warning: var(--warning);
+  --color-warning-tint: var(--warning-tint);
+  --color-danger: var(--danger);
+  --color-danger-strong: var(--danger-strong);
+  --color-danger-tint: var(--danger-tint);
+
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "Cascadia Mono", monospace;
+  --font-heading: var(--font-display);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  html {
+    @apply font-sans;
+    font-variant-numeric: tabular-nums;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--brand-orange);
+    color: var(--ink-on-brand);
+  }
+  input,
+  select,
+  textarea {
+    caret-color: var(--brand-orange-strong);
+    accent-color: var(--brand-orange-strong);
+  }
+  /* Body links: darker orange that holds 4.5:1 on light grounds. */
+  a:not([class]) {
+    color: var(--brand-link);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  a:not([class]):hover {
+    color: var(--brand-link-hover);
+  }
+  * {
+    scrollbar-color: var(--rule-strong) transparent;
+  }
+}
+
+@utility font-display-wide {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 800;
+  font-stretch: 125%;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
+/* Brand signature: the logo's slanted bar, as a cut corner. */
+@utility slant-bar {
+  clip-path: polygon(0 100%, 0.5rem 0, 100% 0, calc(100% - 0.5rem) 100%);
+}
+
+@utility brand-rule {
+  height: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--brand-amber),
+    var(--brand-orange) 55%,
+    var(--brand-orange-strong)
+  );
+  clip-path: polygon(0 0, 100% 0, calc(100% - 1.25rem) 100%, 0 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

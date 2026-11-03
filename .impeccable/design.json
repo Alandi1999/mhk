@@ -1,0 +1,555 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-03T20:14:29Z",
+  "title": "Design System: MHK Moto Repuestos",
+  "extensions": {
+    "colorMeta": {
+      "ground": {
+        "role": "neutral",
+        "displayName": "Cool Silver-White Ground",
+        "canonical": "#f2f3f5",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "surface": {
+        "role": "neutral",
+        "displayName": "Work Surface White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "surface-2": {
+        "role": "neutral",
+        "displayName": "Raised Silver",
+        "canonical": "#e9eaed",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "band-black": {
+        "role": "neutral",
+        "displayName": "Band Black",
+        "canonical": "#000000",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "#111113",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "ink-muted": {
+        "role": "neutral",
+        "displayName": "Ink Muted",
+        "canonical": "#505156",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "ink-on-band": {
+        "role": "neutral",
+        "displayName": "White On Band",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "silver": {
+        "role": "neutral",
+        "displayName": "Logo Silver",
+        "canonical": "#a0a0a2",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "rule": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "#d4d5da",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "rule-strong": {
+        "role": "neutral",
+        "displayName": "Control Edge",
+        "canonical": "#8a8b90",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "rule-on-band": {
+        "role": "neutral",
+        "displayName": "Band Rule",
+        "canonical": "#3a3a3d",
+        "tonalRamp": [
+          "#0b0b0b",
+          "#252525",
+          "#424242",
+          "#616161",
+          "#828282",
+          "#a5a5a5",
+          "#c9c9c9",
+          "#eeeeee"
+        ]
+      },
+      "amber": {
+        "role": "primary",
+        "displayName": "Signal Amber",
+        "canonical": "#f9a427",
+        "tonalRamp": [
+          "#220000",
+          "#500000",
+          "#742700",
+          "#984a00",
+          "#bd6c00",
+          "#e39000",
+          "#f7bd79",
+          "#ffe9cb"
+        ]
+      },
+      "orange": {
+        "role": "primary",
+        "displayName": "Counter Orange",
+        "canonical": "#f77817",
+        "tonalRamp": [
+          "#2a0000",
+          "#5e0000",
+          "#850000",
+          "#ac3100",
+          "#d35700",
+          "#fb7c1e",
+          "#ffb17f",
+          "#ffe4ce"
+        ]
+      },
+      "orange-strong": {
+        "role": "primary",
+        "displayName": "Pressed Orange",
+        "canonical": "#ec6315",
+        "tonalRamp": [
+          "#2c0000",
+          "#620000",
+          "#890000",
+          "#b02800",
+          "#d85000",
+          "#ff7631",
+          "#ffae84",
+          "#ffe3d0"
+        ]
+      },
+      "link": {
+        "role": "secondary",
+        "displayName": "Brand Link Rust",
+        "canonical": "#b23f00",
+        "tonalRamp": [
+          "#280000",
+          "#5b0000",
+          "#810500",
+          "#a73500",
+          "#cf5929",
+          "#f77e4f",
+          "#ffb192",
+          "#ffe4d5"
+        ]
+      },
+      "link-hover": {
+        "role": "secondary",
+        "displayName": "Deep Rust",
+        "canonical": "#8a3000",
+        "tonalRamp": [
+          "#240000",
+          "#530000",
+          "#771e00",
+          "#9d4119",
+          "#c3643e",
+          "#ea8760",
+          "#fcb69c",
+          "#ffe6da"
+        ]
+      },
+      "success": {
+        "role": "status",
+        "displayName": "Approved Green",
+        "canonical": "#14532d",
+        "tonalRamp": [
+          "#001101",
+          "#00300c",
+          "#0f4f29",
+          "#347048",
+          "#569268",
+          "#79b68a",
+          "#acd5b6",
+          "#e1f4e6"
+        ]
+      },
+      "success-tint": {
+        "role": "status",
+        "displayName": "Approved Tint",
+        "canonical": "#dcf5e4",
+        "tonalRamp": [
+          "#040e07",
+          "#162a1e",
+          "#33483a",
+          "#526759",
+          "#72897a",
+          "#94ac9c",
+          "#becec3",
+          "#e9f1eb"
+        ]
+      },
+      "warning": {
+        "role": "status",
+        "displayName": "Pending Brown",
+        "canonical": "#6b3a00",
+        "tonalRamp": [
+          "#1b0400",
+          "#431500",
+          "#643400",
+          "#875423",
+          "#ab7545",
+          "#d09867",
+          "#e8c0a0",
+          "#feebdb"
+        ]
+      },
+      "warning-tint": {
+        "role": "status",
+        "displayName": "Pending Tint",
+        "canonical": "#ffe9bf",
+        "tonalRamp": [
+          "#130900",
+          "#332200",
+          "#513f19",
+          "#715e39",
+          "#948059",
+          "#b7a27a",
+          "#d6c7ac",
+          "#f4eee1"
+        ]
+      },
+      "danger": {
+        "role": "status",
+        "displayName": "Error Red",
+        "canonical": "#b42318",
+        "tonalRamp": [
+          "#2c0000",
+          "#620000",
+          "#8a0000",
+          "#b12015",
+          "#da4a3b",
+          "#ff705e",
+          "#ffaa9a",
+          "#ffe1d9"
+        ]
+      },
+      "danger-strong": {
+        "role": "status",
+        "displayName": "Deep Error Red",
+        "canonical": "#8f1d12",
+        "tonalRamp": [
+          "#270000",
+          "#5a0000",
+          "#7f0601",
+          "#a63527",
+          "#cd5949",
+          "#f57c6a",
+          "#ffb0a2",
+          "#ffe4dc"
+        ]
+      },
+      "danger-tint": {
+        "role": "status",
+        "displayName": "Error Tint",
+        "canonical": "#fde4e1",
+        "tonalRamp": [
+          "#120807",
+          "#31201e",
+          "#503c3a",
+          "#705b59",
+          "#937c7a",
+          "#b69f9c",
+          "#d5c5c3",
+          "#f4eceb"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Page-level h1 only: Archivo 800 italic, width 125%."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Table cells, hints and dense data at 14px, normal width."
+      },
+      "body-lg": {
+        "displayName": "Body Large",
+        "purpose": "Inputs on touch widths and page descriptions, 16px."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Field labels, buttons, nav and tab links, badges (600, 14px)."
+      },
+      "table-head": {
+        "displayName": "Table Head",
+        "purpose": "Uppercase 12px column headers in Ink Muted."
+      },
+      "code": {
+        "displayName": "Code",
+        "purpose": "CUIT and part codes in Geist Mono."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "duration-state",
+        "value": "150ms",
+        "purpose": "Color, background and border transitions on buttons, inputs, nav and tab links."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "0.01ms",
+        "purpose": "prefers-reduced-motion collapses all animation and transition durations."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "md",
+        "value": "768px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      }
+    ],
+    "signatures": [
+      {
+        "name": "slant-bar",
+        "value": "clip-path: polygon(0 100%, 0.5rem 0, 100% 0, calc(100% - 0.5rem) 100%)",
+        "purpose": "4px active-state marker under nav items and tabs."
+      },
+      {
+        "name": "brand-rule",
+        "value": "4px linear-gradient(90deg,#f9a427,#f77817 55%,#ec6315) with diagonal right end",
+        "purpose": "Header underline and mobile auth band underline."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Orange fill with black label; the single primary action.",
+      "html": "<button class=\"ds-btn-primary\">Aprobar</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border:1px solid transparent;border-radius:6.4px;font:600 14px/1 Archivo, ui-sans-serif, system-ui, sans-serif;cursor:pointer;transition:background-color .15s,border-color .15s;background:#f77817;color:#000}.ds-btn-primary:hover,.ds-btn-primary:active{background:#ec6315}.ds-btn-primary:focus-visible{outline:2px solid #111113;outline-offset:2px}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action on light surfaces.",
+      "html": "<button class=\"ds-btn-outline\">Rechazar</button>",
+      "css": ".ds-btn-outline{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border:1px solid transparent;border-radius:6.4px;font:600 14px/1 Archivo, ui-sans-serif, system-ui, sans-serif;cursor:pointer;transition:background-color .15s,border-color .15s;background:#fff;color:#111113;border-color:#8a8b90}.ds-btn-outline:hover,.ds-btn-outline:active{background:#e9eaed}.ds-btn-outline:focus-visible{outline:2px solid #111113;outline-offset:2px}"
+    },
+    {
+      "name": "Inverse Button",
+      "kind": "button",
+      "refersTo": "button-inverse",
+      "description": "Button used inside the black band (log out).",
+      "html": "<div class=\"ds-band-wrap\"><button class=\"ds-btn-inverse\">Cerrar sesión</button></div>",
+      "css": ".ds-band-wrap{background:#000;padding:12px}.ds-btn-inverse{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:44px;padding:0 16px;border:1px solid transparent;border-radius:6.4px;font:600 14px/1 Archivo, ui-sans-serif, system-ui, sans-serif;cursor:pointer;transition:background-color .15s,border-color .15s;background:transparent;color:#fff;border-color:#3a3a3d}.ds-btn-inverse:hover{background:rgba(255,255,255,.1)}.ds-btn-inverse:focus-visible{outline:2px solid #f9a427;outline-offset:2px}"
+    },
+    {
+      "name": "Text Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Label above a white field with a 3.4:1 edge; ink border on hover and focus.",
+      "html": "<div class=\"ds-field\"><label for=\"ds-email\">Email</label><input id=\"ds-email\" class=\"ds-input\" type=\"email\"></div>",
+      "css": ".ds-field{display:flex;flex-direction:column;gap:6px;width:280px}.ds-field label{font:600 14px/1.375 Archivo, ui-sans-serif, system-ui, sans-serif;color:#111113}.ds-input{height:44px;width:100%;box-sizing:border-box;padding:0 12px;background:#fff;color:#111113;border:1px solid #8a8b90;border-radius:6.4px;font:400 16px Archivo, ui-sans-serif, system-ui, sans-serif;transition:border-color .15s}.ds-input:hover,.ds-input:focus-visible{border-color:#111113}.ds-input:focus-visible{outline:2px solid #111113;outline-offset:2px}"
+    },
+    {
+      "name": "Header Band Nav",
+      "kind": "nav",
+      "refersTo": "header-band",
+      "description": "Black band with logo placeholder, nav links, amber count chip and the orange slanted active marker, closed by the brand rule.",
+      "html": "<header class=\"ds-band\"><div class=\"ds-band-row\"><span class=\"ds-wordmark\">MHK</span><nav><ul><li><a class=\"ds-nav\" href=\"#\">Panel</a></li><li><a class=\"ds-nav ds-active\" href=\"#\" aria-current=\"page\">Clientes <span class=\"ds-count\">3</span><span class=\"ds-slant\"></span></a></li></ul></nav></div><div class=\"ds-rule\"></div></header>",
+      "css": ".ds-band{background:#000;color:#fff}.ds-band-row{display:flex;align-items:center;gap:24px;padding:8px 16px}.ds-wordmark{font:italic 800 24px/1 Archivo, ui-sans-serif, system-ui, sans-serif;font-stretch:125%;color:#f77817}.ds-band ul{display:flex;gap:4px;margin:0;padding:0;list-style:none}.ds-nav{position:relative;display:flex;align-items:center;height:44px;padding:0 12px;font:600 14px Archivo, ui-sans-serif, system-ui, sans-serif;color:#a0a0a2;text-decoration:none;transition:color .15s}.ds-nav:hover,.ds-active{color:#fff}.ds-nav:focus-visible{outline:2px solid #f9a427;outline-offset:2px}.ds-count{margin-left:8px;min-width:24px;padding:2px 6px;border-radius:4.8px;background:#f9a427;color:#000;font:700 14px/1 Archivo, ui-sans-serif, system-ui, sans-serif;text-align:center}.ds-slant{position:absolute;left:4px;right:4px;bottom:0;height:4px;background:#f77817;clip-path:polygon(0 100%,.5rem 0,100% 0,calc(100% - .5rem) 100%)}.ds-rule{height:4px;background:linear-gradient(90deg,#f9a427,#f77817 55%,#ec6315);clip-path:polygon(0 0,100% 0,calc(100% - 1.25rem) 100%,0 100%)}"
+    },
+    {
+      "name": "Filter Tabs",
+      "kind": "nav",
+      "refersTo": "tabs",
+      "description": "Light-ground tabs with the slanted active marker.",
+      "html": "<nav><ul class=\"ds-tabs\"><li><a class=\"ds-tab ds-tab-on\" href=\"#\" aria-current=\"page\">Pendientes<span class=\"ds-slant2\"></span></a></li><li><a class=\"ds-tab\" href=\"#\">Aprobados</a></li><li><a class=\"ds-tab\" href=\"#\">Rechazados</a></li></ul></nav>",
+      "css": ".ds-tabs{display:flex;gap:4px;margin:0;padding:0;list-style:none;border-bottom:1px solid #d4d5da}.ds-tab{position:relative;display:flex;align-items:center;height:44px;padding:0 16px;font:600 14px Archivo, ui-sans-serif, system-ui, sans-serif;color:#505156;text-decoration:none;transition:color .15s}.ds-tab:hover,.ds-tab-on{color:#111113}.ds-tab:focus-visible{outline:2px solid #111113;outline-offset:2px}.ds-slant2{position:absolute;left:4px;right:4px;bottom:0;height:4px;background:#f77817;clip-path:polygon(0 100%,.5rem 0,100% 0,calc(100% - .5rem) 100%)}"
+    },
+    {
+      "name": "Status Badge",
+      "kind": "chip",
+      "refersTo": "status-badge-pending",
+      "description": "Text plus icon on a tint; pending, approved and rejected variants.",
+      "html": "<span class=\"ds-badge ds-b-pending\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"M12 6v6l4 2\"/></svg>Pendiente</span> <span class=\"ds-badge ds-b-ok\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m9 12 2 2 4-4\"/></svg>Aprobado</span> <span class=\"ds-badge ds-b-no\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" aria-hidden=\"true\"><circle cx=\"12\" cy=\"12\" r=\"10\"/><path d=\"m15 9-6 6M9 9l6 6\"/></svg>Rechazado</span>",
+      "css": ".ds-badge{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:4.8px;font:600 14px Archivo, ui-sans-serif, system-ui, sans-serif;white-space:nowrap}.ds-b-pending{background:#ffe9bf;color:#6b3a00}.ds-b-ok{background:#dcf5e4;color:#14532d}.ds-b-no{background:#fde4e1;color:#8f1d12}"
+    },
+    {
+      "name": "Client Table",
+      "kind": "custom",
+      "refersTo": "table-head",
+      "description": "Dense admin table: raised header, mono CUIT, hairline rows, right-aligned actions.",
+      "html": "<div class=\"ds-table-wrap\"><table class=\"ds-table\"><thead><tr><th>Razón social</th><th>CUIT</th><th>Esperando</th><th class=\"ds-r\">Acciones</th></tr></thead><tbody><tr><td class=\"ds-strong\">Taller Rodriguez SRL</td><td class=\"ds-mono\">30-71234567-1</td><td>hace 1 min</td><td class=\"ds-r\"><button class=\"ds-t-btn\">Aprobar</button></td></tr><tr><td class=\"ds-strong\">Motos del Sur</td><td class=\"ds-mono\">20-12345678-6</td><td>hace 1 min</td><td class=\"ds-r\"><button class=\"ds-t-btn\">Aprobar</button></td></tr></tbody></table></div>",
+      "css": ".ds-table-wrap{border:1px solid #d4d5da;border-radius:8px;background:#fff;overflow:hidden}.ds-table{width:100%;border-collapse:collapse;font:400 14px Archivo, ui-sans-serif, system-ui, sans-serif;color:#111113;text-align:left}.ds-table th{background:#e9eaed;padding:12px 16px;font:700 12px Archivo, ui-sans-serif, system-ui, sans-serif;letter-spacing:.025em;text-transform:uppercase;color:#505156}.ds-table td{padding:12px 16px;border-top:1px solid #d4d5da}.ds-table tbody tr:hover{background:#f2f3f5}.ds-strong{font-weight:600}.ds-mono{font-family:'Geist Mono',ui-monospace,monospace;white-space:nowrap}.ds-r{text-align:right}.ds-t-btn{height:32px;padding:0 12px;border:0;border-radius:6.4px;background:#f77817;color:#000;font:600 14px Archivo, ui-sans-serif, system-ui, sans-serif;cursor:pointer}.ds-t-btn:hover{background:#ec6315}.ds-t-btn:focus-visible{outline:2px solid #111113;outline-offset:2px}"
+    },
+    {
+      "name": "Form Alert",
+      "kind": "custom",
+      "refersTo": "form-alert",
+      "description": "Form-level error: tint panel with icon and deep red text.",
+      "html": "<p class=\"ds-alert\"><svg width=\"16\" height=\"16\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z\"/><path d=\"M12 9v4M12 17h.01\"/></svg><span>Email o contraseña incorrectos.</span></p>",
+      "css": ".ds-alert{display:flex;align-items:flex-start;gap:8px;margin:0;padding:10px 12px;border-radius:6.4px;background:#fde4e1;color:#8f1d12;font:500 14px/1.4 Archivo, ui-sans-serif, system-ui, sans-serif}.ds-alert svg{margin-top:2px;flex-shrink:0}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Parts Counter",
+    "overview": "The system is a working counter, not a storefront. Screens are dense, scannable and code-first: a cool silver-white ground, white work surfaces, and a black band that carries the brand. Orange is the action color and nothing else; silver is structure. The signature is the logo's slanted bar, reused as a cut-corner on the header underline, the active-nav and active-tab marker, and the auth panel edge.\n\nPersonality is direct and confident, closer to a tool than to retail. Density is high on desktop (44px controls on touch widths drop to 40px and 32px from md), and the admin table is the model surface. Brand drama is spent in two places only: the black band and the italic extra-wide display heading.",
+    "keyCharacteristics": [
+      "Cool light ground (#f2f3f5) with white surfaces and hairline silver rules; no shadows anywhere.",
+      "Black header band and auth brand panel, with a 4px orange gradient rule beneath the header.",
+      "Orange fills always carry black text; orange is never body text on a light ground.",
+      "Heavy italic extra-wide display type for headings; a plain-width workhorse for data; mono for part codes and CUIT.",
+      "Status and errors are always text plus an icon shape, never color alone."
+    ],
+    "rules": [
+      {
+        "name": "The Black-On-Orange Rule",
+        "body": "Orange is a fill, never a text color on white or ground (orange on ground is 2.47:1). Any label on an orange fill is black.",
+        "section": "colors"
+      },
+      {
+        "name": "The Link Rust Rule",
+        "body": "Inline links use #b23f00, not the brand orange. It is the only orange-family value allowed to color text on light grounds.",
+        "section": "colors"
+      },
+      {
+        "name": "The Not-Color-Alone Rule",
+        "body": "Status, counts and errors always combine text with an icon or shape. Color only reinforces.",
+        "section": "colors"
+      },
+      {
+        "name": "The Wide Heading Rule",
+        "body": "Only page-level headings use the wide italic display style. Data, labels and table text stay at normal width.",
+        "section": "typography"
+      },
+      {
+        "name": "The Mono For Codes Rule",
+        "body": "Identifiers a buyer reads or types (CUIT, part codes) use the mono face, never the proportional one.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Do not add box-shadows. Separate planes with surface tone and a hairline border. State changes use color and border shifts only.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Slant Signature Rule",
+        "body": "The slanted bar marks \"you are here\" and the header underline. Do not use it as decoration elsewhere.",
+        "section": "shapes"
+      }
+    ],
+    "dos": [
+      "Do put black text on every orange fill and keep orange text off light grounds.",
+      "Do use Link Rust (#b23f00) for inline links, underlined with a 3px offset.",
+      "Do pair every status, count or error with text and an icon shape.",
+      "Do use the mono face for CUIT and part codes, and tabular numerals for figures.",
+      "Do keep surfaces flat: white on silver-white, Raised Silver for table headers, 1px Hairline borders.",
+      "Do keep touch targets at 44px on small screens and ensure a visible 2px focus ring (ink on light, amber on black).",
+      "Do render dense data as a table from lg and as stacked rows below it.",
+      "Do write UI copy in Spanish (es-AR, voseo): \"Ingresar\", \"Aprobar\", \"Recargá e intentá de nuevo\"."
+    ],
+    "donts": [
+      "Don't add box-shadows or glow effects.",
+      "Don't use the wide italic display style for body, data or labels.",
+      "Don't use the slant bar as a decorative divider; it marks active state and the header underline.",
+      "Don't introduce a retail hero, card grid or promotional banner; the system is a counter, not a storefront.",
+      "Don't use Hairline (#d4d5da) as the only edge of an input or control; use Control Edge (#8a8b90).",
+      "Don't rely on the orange slant bar alone to show the active item; keep text weight/color and aria-current."
+    ]
+  }
+}
