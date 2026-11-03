@@ -154,6 +154,7 @@ The system is a working counter, not a storefront. Screens are dense, scannable 
 Personality is direct and confident, closer to a tool than to retail. Density is high on desktop (44px controls on touch widths drop to 40px and 32px from `md`), and the admin table is the model surface. Brand drama is spent in two places only: the black band and the italic extra-wide display heading.
 
 **Key Characteristics:**
+
 - Cool light ground (#f2f3f5) with white surfaces and hairline silver rules; no shadows anywhere.
 - Black header band and auth brand panel, with a 4px orange gradient rule beneath the header.
 - Orange fills always carry black text; orange is never body text on a light ground.
@@ -165,14 +166,17 @@ Personality is direct and confident, closer to a tool than to retail. Density is
 A black-and-orange brand on a silver-white working ground. Neutrals do the structural work; the warm accent is held for actions and the signature mark.
 
 ### Primary
+
 - **Counter Orange** (#f77817): the primary action fill (`button-primary`), active-nav and active-tab slanted marker, text selection background. Always carries black text (7.65:1).
 - **Pressed Orange** (#ec6315): hover and active state of the primary button, caret and accent-color of form controls, end stop of the brand rule (black on it 6.36:1).
 - **Signal Amber** (#f9a427): top of the brand rule gradient, the count badge on the black band, and the focus ring inside black bands (10.37:1 on black).
 
 ### Secondary
+
 - **Brand Link Rust** (#b23f00): body links on light grounds, underlined with a 3px offset (5.83:1 on white, 5.25:1 on ground). Hover is **Deep Rust** (#8a3000, 8.39:1 on white).
 
 ### Neutral
+
 - **Cool Silver-White Ground** (#f2f3f5): page background.
 - **Work Surface White** (#ffffff): cards, tables, inputs, outline buttons.
 - **Raised Silver** (#e9eaed): table header, secondary and ghost hover, disabled input fill.
@@ -185,11 +189,13 @@ A black-and-orange brand on a silver-white working ground. Neutrals do the struc
 - **Band Rule** (#3a3a3d): borders of inverse buttons on black.
 
 ### Status (text + tint pairs)
+
 - **Pending**: #6b3a00 on #ffe9bf (7.92:1).
 - **Approved**: #14532d on #dcf5e4 (7.91:1).
 - **Rejected / alert**: #8f1d12 on #fde4e1 (7.38:1). Field error text is #b42318 (6.57:1 on white, 5.44:1 on the tint).
 
 ### Named Rules
+
 **The Black-On-Orange Rule.** Orange is a fill, never a text color on white or ground (orange on ground is 2.47:1). Any label on an orange fill is black.
 
 **The Link Rust Rule.** Inline links use #b23f00, not the brand orange. It is the only orange-family value allowed to color text on light grounds.
@@ -205,6 +211,7 @@ A black-and-orange brand on a silver-white working ground. Neutrals do the struc
 **Character:** The display face echoes the logo lettering: heavy, italic and extra-expanded. Beneath it, the same family at normal width keeps data compact and readable. The document language is `es-AR`.
 
 ### Hierarchy
+
 - **Display** (800, italic, `font-stretch: 125%`, 1.875rem, 1.05, -0.01em): page `h1` (Ingresar, Clientes). Utility: `font-display-wide`.
 - **Body** (400, 0.875rem, ~1.43): table cells, hints, descriptions in dense views. Descriptions use 1rem capped at 65ch.
 - **Body large** (400, 1rem): form inputs on touch widths (drops to 0.875rem from `md`), page descriptions.
@@ -215,6 +222,7 @@ A black-and-orange brand on a silver-white working ground. Neutrals do the struc
 Tabular numerals are enabled globally (`font-variant-numeric: tabular-nums`) so columns of figures align.
 
 ### Named Rules
+
 **The Wide Heading Rule.** Only page-level headings use the wide italic display style. Data, labels and table text stay at normal width.
 
 **The Mono For Codes Rule.** Identifiers a buyer reads or types (CUIT, part codes) use the mono face, never the proportional one.
@@ -230,6 +238,7 @@ Breakpoints are Tailwind defaults: `md` 768px and `lg` 1024px. At `md` the auth 
 Flat. No shadows exist in the system. Depth comes from tonal layering: white surfaces on the silver-white ground, Raised Silver for table headers, 1px Hairline borders, and the black band as the only heavy plane. The one dimensional device is the clipped slant edge of the auth brand panel and the brand rule.
 
 ### Named Rules
+
 **The Flat-By-Default Rule.** Do not add box-shadows. Separate planes with surface tone and a hairline border. State changes use color and border shifts only.
 
 ## Shapes
@@ -237,12 +246,15 @@ Flat. No shadows exist in the system. Depth comes from tonal layering: white sur
 Softly squared, not pill-shaped. The base radius is 0.5rem (8px); buttons and inputs use 6.4px, badges and count chips 4.8px, tables and list cards 8px. Borders are 1px. The signature silhouette is the slanted cut: a 4px-high parallelogram (`slant-bar`, cut inset 0.5rem) under the active nav item or tab, a 4px orange gradient `brand-rule` with a diagonal right end under the header, and a diagonal right edge (2rem) on the desktop auth brand panel.
 
 ### Named Rules
+
 **The Slant Signature Rule.** The slanted bar marks "you are here" and the header underline. Do not use it as decoration elsewhere.
 
 ## Components
 
 ### Buttons
+
 Compact, bold and square-ish. Text is 14px semibold with a 6.4px radius, 44px high on touch widths, 40px (default) or 32px (`sm`) from `md`, and 48px for `lg`.
+
 - **Primary (default):** Counter Orange fill, black label. Hover and active: Pressed Orange.
 - **Outline:** white fill, Control Edge border, ink label; hover Raised Silver. Used for the secondary action (Rechazar).
 - **Secondary / Ghost:** Raised Silver fill or no fill with ink label; hover darkens to Hairline or Raised Silver.
@@ -252,29 +264,37 @@ Compact, bold and square-ish. Text is 14px semibold with a 6.4px radius, 44px hi
 - **Focus:** 2px outline with 2px offset, ink on light grounds and amber inside black bands.
 
 ### Inputs / Fields
+
 White fill, 1px Control Edge border (3.40:1), 6.4px radius, 44px high (40px from `md`), text 16px on touch and 14px from `md`. Placeholder Ink Muted. Hover and focus-visible turn the border to ink. Invalid turns the border to #b42318 and shows an icon-led message line beneath (live region, always mounted so layout does not shift). Disabled uses Raised Silver fill and muted text. Labels sit above in 14px semibold, with a 6px gap. Selects share the same control class and keep the native picker.
 
 ### Header band and navigation
+
 Black band with a 128px logo, the area navigation, the signed-in label in Logo Silver and an inverse Logout button, closed by the 4px brand rule. Nav links are 44px high, 14px semibold, Logo Silver at rest and white when active or hovered. The active link gets the orange slanted bar along its bottom edge plus `aria-current="page"`. Pending counts appear as an Amber chip with black text. A lone nav destination is hidden on mobile.
 
 ### Tabs (filter nav)
+
 Same anatomy on the light ground: 44px links on a Hairline baseline, Ink Muted at rest, ink when active, with the orange slant bar. Counts use the light count badge (warning tint pair).
 
 ### Data table
+
 White container, 1px Hairline border, 8px radius. Sticky header row in Raised Silver, with uppercase 12px bold Ink Muted headers. Cells use 16px by 12px padding, 14px text, row dividers in Hairline, and row hover shifts to the ground color. Company name is semibold; CUIT is mono and non-wrapping; actions are right-aligned. Below `lg` rows stack into bordered list items with a label/value grid.
 
 ### Status and count badges
+
 Status: 4.8px radius, 14px semibold, a 16px icon (Clock, CircleCheck, CircleX) plus text on the matching tint. Count: bold tabular number, with an accessible "N pendientes" name; hidden at zero.
 
 ### Form alert
+
 Rounded tint panel (danger tint, #8f1d12 text) with a TriangleAlert icon, in an always-mounted `role="alert"` region; optional reserved height above submit buttons.
 
 ### Auth shell
+
 Black brand panel with the large logo and one statement in Logo Silver 18px, a clipped diagonal edge on desktop; a compact black top band with the brand rule on mobile.
 
 ## Do's and Don'ts
 
 ### Do:
+
 - **Do** put black text on every orange fill and keep orange text off light grounds.
 - **Do** use Link Rust (#b23f00) for inline links, underlined with a 3px offset.
 - **Do** pair every status, count or error with text and an icon shape.
@@ -285,6 +305,7 @@ Black brand panel with the large logo and one statement in Logo Silver 18px, a c
 - **Do** write UI copy in Spanish (es-AR, voseo): "Ingresar", "Aprobar", "Recargá e intentá de nuevo".
 
 ### Don't:
+
 - **Don't** add box-shadows or glow effects.
 - **Don't** use the wide italic display style for body, data or labels.
 - **Don't** use the slant bar as a decorative divider; it marks active state and the header underline.
