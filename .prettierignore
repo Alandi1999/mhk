@@ -1,0 +1,10 @@
+node_modules
+.next
+coverage
+pnpm-lock.yaml
+package-lock.json
+public
+supabase/.temp
+supabase/.branches
+odd
+PRODUCT.md
