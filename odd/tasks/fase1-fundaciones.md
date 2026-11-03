@@ -18,7 +18,7 @@ Phase 1 only: scaffold, local Supabase, profiles + roles + RLS, auth (login, reg
 ## Tasks
 - [x] T1 Scaffold: Next.js + TS + Tailwind + shadcn/ui, eslint/prettier, vitest, pnpm scripts, .gitignore, .env.example
 - [x] T2 Local Supabase: `supabase init`, config, `@supabase/ssr` clients (server/browser/middleware), env validation
-- [ ] T3 Schema + RLS: migration for `profiles` (role, status pending/approved/rejected, CUIT, tax condition), trigger on `auth.users`, RLS policies, seed admin; SQL tests
+- [x] T3 Schema + RLS: migration for `profiles` (role, status pending/approved/rejected, CUIT, tax condition), trigger on `auth.users`, RLS policies, seed admin; SQL tests
 - [ ] T4 Auth + role shells: login, register (pending approval), middleware guards, `/admin` and `/tienda` placeholder layouts, tests
 - [ ] T5 CI: GitHub Actions (lint, typecheck, unit tests, supabase db tests)
 - [ ] T6 Design tokens: `DESIGN.md` + Tailwind tokens from `public/mhk logo.png` via impeccable, applied to login and shells
@@ -35,6 +35,7 @@ Recorded as tasks start (inline vs delegated, with trigger evidence).
 - T2 env validation (`src/lib/env.ts`) done test-first: RED observed (unresolved import), then GREEN (6 tests). Scaffold/config exempt from RED (no meaningful runnable test); covered by build/lint/typecheck and a Button smoke test.
 - `pnpm db:start` booted local Supabase (API http://127.0.0.1:54321, auth health 200, db/auth/kong/rest/storage healthy), then `pnpm db:stop`. `supabase_vector` container keeps restarting on Docker Desktop (log shipper only, non-blocking). Local keys live in untracked `.env.local`.
 - Deviations: Next 16.4.4 warns `middleware` is deprecated in favor of `proxy`; kept `src/middleware.ts` per spec (works, build passes). create-next-app enabled `cacheComponents` and `partialPrefetching` in next.config.ts (kept). shadcn registry emitted a bogus `cn` package import/util; replaced with standard clsx + tailwind-merge `src/lib/utils.ts`. Removed generated AGENTS.md.
+- T3: delegated direct writer (trigger: 2+ non-trivial files). RED observed (`is_valid_cuit` missing, 0/24), then GREEN: `pnpm db:reset` ok (migration + seed), `pnpm db:test` 24/24 pass, typecheck/lint/test(7)/build/format:check ok. Clients typed with `Database` generic (trivial). Decision: invalid CUIT in signup metadata aborts signup (CHECK violation 23514), not silently nulled. Commit pending (parent).
 
 ## Next step
-Commit T1/T2, then T3.
+Commit T3, then T4.
