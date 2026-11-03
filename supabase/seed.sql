@@ -1,4 +1,5 @@
 -- LOCAL DEV ONLY. Never run against a hosted project.
+-- Seeded ids are RFC 4122 v4-shaped so they pass strict uuid validation.
 -- Admin: admin@mhk.local / admin1234 (documented in README, local only).
 -- Sample clients (pending approval): cliente1@mhk.local, cliente2@mhk.local (same password).
 
@@ -8,10 +9,10 @@ declare
 begin
   for u in
     select * from (values
-      ('00000000-0000-0000-0000-00000000ad01'::uuid, 'admin@mhk.local', '{"razon_social":"MHK Administracion"}'::jsonb),
-      ('00000000-0000-0000-0000-00000000c101'::uuid, 'cliente1@mhk.local',
+      ('a0a0a0a0-0000-4000-8000-00000000ad01'::uuid, 'admin@mhk.local', '{"razon_social":"MHK Administracion"}'::jsonb),
+      ('c1c1c1c1-0000-4000-8000-00000000c101'::uuid, 'cliente1@mhk.local',
         '{"razon_social":"Taller Rodriguez SRL","cuit":"30712345671","tax_condition":"responsable_inscripto","phone":"+54 11 5555-0001"}'::jsonb),
-      ('00000000-0000-0000-0000-00000000c102'::uuid, 'cliente2@mhk.local',
+      ('c1c1c1c1-0000-4000-8000-00000000c102'::uuid, 'cliente2@mhk.local',
         '{"razon_social":"Motos del Sur","cuit":"20123456786","tax_condition":"monotributo","phone":"+54 11 5555-0002"}'::jsonb)
     ) as t(id, email, meta)
   loop
@@ -40,4 +41,4 @@ end $$;
 -- The signup trigger always creates cliente/pending; promote the admin here.
 update public.profiles
 set role = 'admin', status = 'approved'
-where id = '00000000-0000-0000-0000-00000000ad01';
+where id = 'a0a0a0a0-0000-4000-8000-00000000ad01';
