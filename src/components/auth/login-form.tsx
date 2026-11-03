@@ -15,7 +15,6 @@ export function LoginForm({ next }: { next: string | null }) {
   return (
     <form action={action} className="flex flex-col gap-2" noValidate>
       {next ? <input type="hidden" name="next" value={next} /> : null}
-      <FormAlert>{state.error}</FormAlert>
       <FormField
         name="email"
         type="email"
@@ -32,7 +31,8 @@ export function LoginForm({ next }: { next: string | null }) {
         required
         error={state.fieldErrors?.password}
       />
-      <Button type="submit" size="lg" loading={pending} className="mt-1">
+      <FormAlert reserve>{state.error}</FormAlert>
+      <Button type="submit" size="lg" loading={pending}>
         {pending ? "Ingresando..." : "Ingresar"}
       </Button>
       <p className="text-sm text-ink-muted">

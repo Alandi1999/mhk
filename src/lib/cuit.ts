@@ -23,3 +23,13 @@ export function isValidCuit(cuit: string): boolean {
   else if (dv === 10) return false;
   return dv === Number(cuit[10]);
 }
+
+/**
+ * Display format XX-XXXXXXXX-X. Anything that is not 11 digits once the usual
+ * separators are stripped is returned unchanged.
+ */
+export function formatCuit(input: string): string {
+  const digits = normalizeCuit(input);
+  if (!/^[0-9]{11}$/.test(digits)) return input;
+  return `${digits.slice(0, 2)}-${digits.slice(2, 10)}-${digits.slice(10)}`;
+}

@@ -56,7 +56,7 @@ export function FormField({
         {...inputProps}
       />
       {hint ? (
-        <p id={hintId} className="text-xs text-ink-muted">
+        <p id={hintId} className="text-sm text-ink-muted">
           {hint}
         </p>
       ) : null}

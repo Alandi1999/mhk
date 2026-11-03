@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { isValidCuit, normalizeCuit } from "./cuit";
+import { formatCuit, isValidCuit, normalizeCuit } from "./cuit";
 
 describe("isValidCuit", () => {
   it.each([
@@ -38,5 +38,24 @@ describe("normalizeCuit", () => {
 
   it("keeps other characters so validation fails later", () => {
     expect(normalizeCuit("20-1234567a-6")).toBe("201234567a6");
+  });
+});
+
+describe("formatCuit", () => {
+  it("formats 11 digits as XX-XXXXXXXX-X", () => {
+    expect(formatCuit("20123456786")).toBe("20-12345678-6");
+    expect(formatCuit("30712345671")).toBe("30-71234567-1");
+  });
+
+  it("normalizes already formatted or spaced input", () => {
+    expect(formatCuit("20-12345678-6")).toBe("20-12345678-6");
+    expect(formatCuit(" 20 12345678 6 ")).toBe("20-12345678-6");
+  });
+
+  it("returns invalid or short input unchanged", () => {
+    expect(formatCuit("2012345")).toBe("2012345");
+    expect(formatCuit("201234567866")).toBe("201234567866");
+    expect(formatCuit("2012345678a")).toBe("2012345678a");
+    expect(formatCuit("")).toBe("");
   });
 });

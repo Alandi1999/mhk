@@ -23,7 +23,7 @@ export function AuthShell({
           <div className="w-32 shrink-0 md:w-full md:max-w-sm">
             <BrandLogo priority sizes="(min-width: 768px) 384px, 128px" />
           </div>
-          <p className="max-w-xs text-xs leading-snug font-medium text-ink-on-band-muted md:text-lg">
+          <p className="max-w-xs text-sm leading-snug font-medium text-ink-on-band-muted md:text-lg">
             {STATEMENT}
           </p>
         </div>

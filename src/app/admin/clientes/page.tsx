@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FormAlert } from "@/components/auth/form-alert";
+import { CountBadge } from "@/components/shell/count-badge";
 import { PageContainer } from "@/components/shell/page-container";
 import { cn } from "@/lib/utils";
 import { requireProfile } from "@/lib/auth/session";
 import { createClient } from "@/lib/supabase/server";
+import { getPendingClientCount } from "../pending-count";
 import { ClientList } from "./client-list";
 
 export const metadata: Metadata = { title: "Clientes | MHK Moto Repuestos" };
@@ -37,12 +39,14 @@ export default async function ClientsPage({
   const actionError = typeof params.error === "string" ? params.error : null;
 
   const supabase = await createClient();
+  const pendingCount = await getPendingClientCount();
+  // Pending: oldest first, so the longest wait is handled first.
   const { data: clients, error } = await supabase
     .from("profiles")
     .select("id, razon_social, cuit, tax_condition, phone, status, created_at")
     .eq("role", "cliente")
     .eq("status", estado)
-    .order("created_at", { ascending: false });
+    .order("created_at", { ascending: estado === "pending" });
 
   const estadoLabel = FILTERS.find((f) => f.value === estado)?.label ?? "";
 
@@ -63,6 +67,9 @@ export default async function ClientsPage({
                   )}
                 >
                   {f.label}
+                  {f.value === "pending" ? (
+                    <CountBadge count={pendingCount} className="ml-2" />
+                  ) : null}
                   {active ? (
                     <span
                       aria-hidden="true"
@@ -95,6 +102,7 @@ export default async function ClientsPage({
           caption={`Clientes ${estadoLabel.toLowerCase()}`}
           adminId={admin.id}
           estado={estado}
+          now={new Date()}
         />
       )}
     </PageContainer>

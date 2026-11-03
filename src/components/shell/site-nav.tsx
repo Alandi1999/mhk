@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { CountBadge } from "@/components/shell/count-badge";
 import { cn } from "@/lib/utils";
 
 export interface NavItem {
@@ -9,6 +10,8 @@ export interface NavItem {
   label: string;
   /** Match nested routes too (default: exact match). */
   prefix?: boolean;
+  /** Pending-work count shown next to the label. */
+  count?: number;
 }
 
 export function isActive(pathname: string, item: NavItem): boolean {
@@ -40,6 +43,9 @@ export function SiteNav({ label, items }: { label: string; items: NavItem[] }) {
                 )}
               >
                 {item.label}
+                {item.count ? (
+                  <CountBadge count={item.count} tone="band" className="ml-2" />
+                ) : null}
                 {active ? (
                   <span
                     aria-hidden="true"

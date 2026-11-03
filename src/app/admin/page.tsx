@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { CountBadge } from "@/components/shell/count-badge";
 import { PageContainer } from "@/components/shell/page-container";
+import { getPendingClientCount } from "./pending-count";
 
 const UPCOMING = [
   "Stock y catálogo",
@@ -8,37 +10,39 @@ const UPCOMING = [
   "Pedidos y pagos",
 ] as const;
 
-export default function AdminPage() {
+export default async function AdminPage() {
+  const pending = await getPendingClientCount();
   return (
     <PageContainer
       title="Panel de administración"
       description="Gestioná las altas de clientes. El resto de las áreas se suma en próximas etapas."
     >
-      <ul className="max-w-3xl divide-y divide-rule border-y border-rule">
+      <ul className="divide-y divide-rule border-y border-rule">
         <li>
           <Link
             href="/admin/clientes?estado=pending"
-            className="group flex min-h-14 items-center justify-between gap-4 px-1 py-3 hover:bg-surface"
+            className="group grid min-h-14 grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-2 py-3 hover:bg-surface md:grid-cols-[14rem_1fr_auto]"
           >
-            <span className="flex flex-col">
-              <span className="font-semibold text-ink">Clientes</span>
-              <span className="text-sm text-ink-muted">
-                Aprobá o rechazá las altas de comercios.
-              </span>
+            <span className="font-semibold text-ink">Clientes</span>
+            <span className="flex items-center justify-end gap-3 md:order-3">
+              <CountBadge count={pending} showLabel />
+              <ChevronRight
+                aria-hidden="true"
+                className="size-5 text-ink-muted transition-transform duration-150 group-hover:translate-x-0.5"
+              />
             </span>
-            <ChevronRight
-              aria-hidden="true"
-              className="size-5 text-ink-muted transition-transform duration-150 group-hover:translate-x-0.5"
-            />
+            <span className="col-span-2 text-sm text-ink-muted md:order-2 md:col-span-1">
+              Aprobá o rechazá las altas de comercios.
+            </span>
           </Link>
         </li>
         {UPCOMING.map((label) => (
           <li
             key={label}
-            className="flex min-h-14 items-center justify-between gap-4 px-1 py-3 text-ink-muted"
+            className="grid min-h-14 grid-cols-[1fr_auto] items-center gap-x-4 px-2 py-3 text-ink-muted md:grid-cols-[14rem_1fr_auto]"
           >
             <span>{label}</span>
-            <span className="text-sm">Próximamente</span>
+            <span className="text-sm md:col-start-3">Próximamente</span>
           </li>
         ))}
       </ul>

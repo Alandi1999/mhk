@@ -13,10 +13,6 @@ export default async function ShopPage() {
         aria-labelledby="catalogo-titulo"
         className="flex flex-col gap-3 border-t border-rule pt-6"
       >
-        <span
-          aria-hidden="true"
-          className="h-1 w-16 bg-brand-orange slant-bar"
-        />
         <h2 id="catalogo-titulo" className="text-lg font-bold text-ink">
           El catálogo estará disponible próximamente
         </h2>

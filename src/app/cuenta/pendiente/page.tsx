@@ -15,10 +15,6 @@ export default async function PendingPage() {
 
   return (
     <AuthShell>
-      <StatusBadge
-        status={rejected ? "rejected" : "pending"}
-        className="self-start"
-      />
       {rejected ? (
         <>
           <h1 className="font-display-wide text-3xl text-balance text-ink">
@@ -40,6 +36,10 @@ export default async function PendingPage() {
           </p>
         </>
       )}
+      <StatusBadge
+        status={rejected ? "rejected" : "pending"}
+        className="self-start"
+      />
       <div className="self-start">
         <LogoutButton />
       </div>

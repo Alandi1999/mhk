@@ -27,12 +27,12 @@ export function StatusBadge({
     <span
       data-status={status}
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-xs font-semibold whitespace-nowrap",
+        "inline-flex items-center gap-1.5 rounded-sm px-2 py-0.5 text-sm font-semibold whitespace-nowrap",
         tone,
         className,
       )}
     >
-      <Icon aria-hidden="true" className="size-3.5" />
+      <Icon aria-hidden="true" className="size-4" />
       {STATUS_LABELS[status]}
     </span>
   );

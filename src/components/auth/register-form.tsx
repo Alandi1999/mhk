@@ -54,8 +54,6 @@ export function RegisterForm() {
 
   return (
     <form action={action} className="flex flex-col gap-6" noValidate>
-      <FormAlert>{state.error}</FormAlert>
-
       <Group legend="Datos del comercio">
         <FormField
           name="razon_social"
@@ -131,6 +129,7 @@ export function RegisterForm() {
       </Group>
 
       <div className="flex flex-col gap-3">
+        <FormAlert reserve>{state.error}</FormAlert>
         <Button type="submit" size="lg" loading={pending}>
           {pending ? "Enviando..." : "Crear cuenta"}
         </Button>
