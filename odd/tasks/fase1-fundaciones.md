@@ -19,7 +19,7 @@ Phase 1 only: scaffold, local Supabase, profiles + roles + RLS, auth (login, reg
 - [x] T1 Scaffold: Next.js + TS + Tailwind + shadcn/ui, eslint/prettier, vitest, pnpm scripts, .gitignore, .env.example
 - [x] T2 Local Supabase: `supabase init`, config, `@supabase/ssr` clients (server/browser/middleware), env validation
 - [x] T3 Schema + RLS: migration for `profiles` (role, status pending/approved/rejected, CUIT, tax condition), trigger on `auth.users`, RLS policies, seed admin; SQL tests
-- [ ] T4 Auth + role shells: login, register (pending approval), middleware guards, `/admin` and `/tienda` placeholder layouts, tests
+- [x] T4 Auth + role shells: login, register (pending approval), middleware guards, `/admin` and `/tienda` placeholder layouts, tests
 - [ ] T5 CI: GitHub Actions (lint, typecheck, unit tests, supabase db tests)
 - [ ] T6 Design tokens: `DESIGN.md` + Tailwind tokens from `public/mhk logo.png` via impeccable, applied to login and shells
 
@@ -37,5 +37,9 @@ Recorded as tasks start (inline vs delegated, with trigger evidence).
 - Deviations: Next 16.4.4 warns `middleware` is deprecated in favor of `proxy`; kept `src/middleware.ts` per spec (works, build passes). create-next-app enabled `cacheComponents` and `partialPrefetching` in next.config.ts (kept). shadcn registry emitted a bogus `cn` package import/util; replaced with standard clsx + tailwind-merge `src/lib/utils.ts`. Removed generated AGENTS.md.
 - T3: delegated direct writer (trigger: 2+ non-trivial files). RED observed (`is_valid_cuit` missing, 0/24), then GREEN: `pnpm db:reset` ok (migration + seed), `pnpm db:test` 24/24 pass, typecheck/lint/test(7)/build/format:check ok. Clients typed with `Database` generic (trivial). Decision: invalid CUIT in signup metadata aborts signup (CHECK violation 23514), not silently nulled. Commit pending (parent).
 
+- T4: delegated direct writer (trigger: 2+ non-trivial files). RED observed (4 test files failed on unresolved imports: cuit, access, safe-next, schemas), then GREEN (89 tests). Pages/actions exempt from RED; covered by typecheck/lint/build + manual flow. `src/middleware.ts` replaced by `src/proxy.ts` (build no longer warns). shadcn `input`/`label` re-introduced the bogus `cn` import and dependency; fixed to `@/lib/utils` and `cn` removed. Added `server-only`.
+- T4 manual verification (dev server + curl.exe replaying the progressive-enhancement form POSTs): anon /tienda -> /login?next=%2Ftienda; seeded admin login -> /admin/clientes (honours safe next); `next=//evil.com` falls back to /admin; wrong password -> "Email o contraseña incorrectos."; invalid and duplicate CUIT -> generic "No pudimos crear la cuenta..." message; valid signup -> pending profile + /cuenta/pendiente; pending user /tienda and /admin -> /cuenta/pendiente; non-admin posting the approve action -> no change (redirected, DB unchanged); admin approve -> DB status approved; then client /tienda 200 (greeting with razon social), /admin and /login -> /tienda. Not verified: layout guards independently of the proxy (proxy always runs first), email confirmation ON path, browser JS-enabled UX.
+- T4 decisions: admin list does not show email (lives in auth.users; would need service role or a SQL view); admin cannot approve/reject themselves; missing profile = treated as not approved.
+
 ## Next step
-Commit T3, then T4.
+Commit T4, then T5 (CI) and T6 (design).

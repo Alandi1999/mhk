@@ -52,6 +52,14 @@ Datos de desarrollo (`supabase/seed.sql`, **solo local**, se aplican con `pnpm d
 
 Tests de base de datos (pgTAP, requieren `pnpm db:start`): `pnpm db:test`. Tipos TypeScript: `pnpm db:types` (genera `src/lib/supabase/database.types.ts`).
 
+## Autenticación y roles
+
+- Rutas públicas: `/`, `/login`, `/registro`. `/cuenta/pendiente` muestra el estado de cuentas pendientes o rechazadas. `/tienda` requiere cliente aprobado (los admins aprobados también entran) y `/admin/**` requiere admin aprobado.
+- La política vive en `src/lib/auth/access.ts` (función pura) y se aplica en `src/proxy.ts`. Como defensa en profundidad, los layouts de `/admin` y `/tienda` y las server actions de aprobación vuelven a validar con `requireProfile` (`src/lib/auth/session.ts`); la autoridad final sobre los datos es RLS.
+- El parámetro `next` de `/login` solo acepta rutas relativas del mismo origen (`src/lib/auth/safe-next.ts`).
+- Aprobación de clientes: `/admin/clientes` (filtro por estado, aprobar/rechazar).
+- Supabase local tiene las confirmaciones de email desactivadas (`supabase/config.toml`, `enable_confirmations = false`): tras registrarse la sesión queda activa y el usuario va a `/cuenta/pendiente`. Con confirmaciones activadas (producción) el formulario muestra el estado "cuenta pendiente de aprobación" sin sesión.
+
 ## Variables de entorno
 
 Ver `.env.example`. `SUPABASE_SERVICE_ROLE_KEY` es solo de servidor y nunca debe exponerse al navegador. Las variables se validan con Zod en `src/lib/env.ts`.
