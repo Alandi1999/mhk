@@ -1,14 +1,16 @@
-import { ArrowLeft, ImageOff } from "lucide-react";
+import { ArrowLeft, CircleCheck, ImageOff } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FormAlert } from "@/components/auth/form-alert";
 import { PageContainer } from "@/components/shell/page-container";
+import { AddToCartForm } from "@/components/store/add-to-cart-form";
 import { AvailabilityBadge } from "@/components/store/availability-badge";
 import { PriceBlock } from "@/components/store/price-block";
 import { requireProfile } from "@/lib/auth/session";
 import { IMAGE_BUCKET } from "@/lib/catalog/images";
 import { isValidSku, normalizeSku } from "@/lib/catalog/sku";
+import { noticeMessage } from "@/lib/cart/cart";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Repuesto | MHK Moto Repuestos" };
@@ -22,11 +24,16 @@ function years(from: number | null, to: number | null): string {
 
 export default async function StoreProductPage({
   params,
+  searchParams,
 }: PageProps<"/tienda/producto/[sku]">) {
   await requireProfile({ role: "cliente" });
   const { sku: rawSku } = await params;
   const sku = normalizeSku(decodeURIComponent(rawSku));
   if (!isValidSku(sku)) notFound();
+
+  const query = await searchParams;
+  const added = typeof query.agregado === "string" ? query.agregado : "";
+  const cartError = typeof query.error === "string" ? query.error : "";
 
   const supabase = await createClient();
   const { data: product } = await supabase
@@ -123,7 +130,33 @@ export default async function StoreProductPage({
             className="self-start"
           />
           <PriceBlock net={product.price} vatRate={product.vat_rate} />
-          {/* Phase 4: ordering controls go here. */}
+          <AddToCartForm
+            productId={product.id}
+            sku={product.sku}
+            returnTo={`/tienda/producto/${encodeURIComponent(product.sku)}`}
+            orderable={!!product.in_stock && product.price !== null}
+          />
+          {added ? (
+            <p
+              role="status"
+              className="flex items-start gap-2 rounded-md bg-success-tint px-3 py-2.5 text-sm font-medium text-success"
+            >
+              <CircleCheck
+                aria-hidden="true"
+                className="mt-0.5 size-4 shrink-0"
+              />
+              <span>
+                Agregado al carrito.{" "}
+                <Link
+                  href="/tienda/carrito"
+                  className="font-semibold underline underline-offset-4"
+                >
+                  Ver carrito
+                </Link>
+              </span>
+            </p>
+          ) : null}
+          {cartError ? <FormAlert>{noticeMessage(cartError)}</FormAlert> : null}
         </section>
       </div>
 

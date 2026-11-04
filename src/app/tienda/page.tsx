@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { CircleCheck } from "lucide-react";
 import { FormAlert } from "@/components/auth/form-alert";
 import { PageContainer } from "@/components/shell/page-container";
 import { buttonVariants } from "@/components/ui/button";
@@ -19,6 +20,7 @@ import {
   mergeExactFirst,
   storeSearchFilters,
 } from "@/lib/catalog/store-search";
+import { noticeMessage } from "@/lib/cart/cart";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Tienda | MHK Moto Repuestos" };
@@ -129,6 +131,10 @@ export default async function ShopPage({ searchParams }: PageProps<"/tienda">) {
     return `/tienda${s ? `?${s}` : ""}`;
   };
   const filtered = q !== "" || categoria !== "";
+  // Where "Agregar" sends the buyer back to: same search, same page.
+  const returnTo = hrefFor(page);
+  const added = one(params.agregado);
+  const cartError = one(params.error);
 
   return (
     <PageContainer
@@ -136,6 +142,25 @@ export default async function ShopPage({ searchParams }: PageProps<"/tienda">) {
       description={`Hola, ${session.razon_social ?? session.email}. Buscá por código de pieza para encontrar rápido lo que necesitás.`}
     >
       <SearchForm q={q} categoria={categoria} categories={categories ?? []} />
+
+      {added ? (
+        <p
+          role="status"
+          className="flex items-start gap-2 rounded-md bg-success-tint px-3 py-2.5 text-sm font-medium text-success"
+        >
+          <CircleCheck aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+          <span>
+            Agregaste <span className="font-mono">{added}</span> al carrito.{" "}
+            <Link
+              href="/tienda/carrito"
+              className="font-semibold underline underline-offset-4"
+            >
+              Ver carrito
+            </Link>
+          </span>
+        </p>
+      ) : null}
+      {cartError ? <FormAlert>{noticeMessage(cartError)}</FormAlert> : null}
 
       {error && !outOfRange ? (
         <FormAlert>No pudimos cargar el catálogo. Probá de nuevo.</FormAlert>
@@ -165,7 +190,11 @@ export default async function ShopPage({ searchParams }: PageProps<"/tienda">) {
           </p>
           <ul className="flex flex-col gap-3" aria-label="Repuestos">
             {products.map((product) => (
-              <ProductCard key={product.sku} product={product} />
+              <ProductCard
+                key={product.sku}
+                product={product}
+                returnTo={returnTo}
+              />
             ))}
           </ul>
           <nav

@@ -1,9 +1,11 @@
 import { ImageOff } from "lucide-react";
 import Link from "next/link";
+import { AddToCartForm } from "./add-to-cart-form";
 import { AvailabilityBadge } from "./availability-badge";
 import { PriceBlock } from "./price-block";
 
 export type StoreProduct = {
+  id: string;
   sku: string;
   name: string;
   brand: string | null;
@@ -14,7 +16,14 @@ export type StoreProduct = {
 };
 
 /** Catalog row: the SKU leads because buyers order by part code. */
-export function ProductCard({ product }: { product: StoreProduct }) {
+export function ProductCard({
+  product,
+  returnTo,
+}: {
+  product: StoreProduct;
+  /** Current catalog URL, so adding to the cart keeps the search. */
+  returnTo: string;
+}) {
   const href = `/tienda/producto/${encodeURIComponent(product.sku)}`;
   return (
     <li className="flex gap-3 rounded-lg border border-rule bg-surface p-3 md:gap-4 md:p-4">
@@ -56,7 +65,15 @@ export function ProductCard({ product }: { product: StoreProduct }) {
             className="mt-1 self-start"
           />
         </div>
-        <PriceBlock net={product.price} vatRate={product.vat_rate} />
+        <div className="flex flex-col gap-3 md:items-end">
+          <PriceBlock net={product.price} vatRate={product.vat_rate} />
+          <AddToCartForm
+            productId={product.id}
+            sku={product.sku}
+            returnTo={returnTo}
+            orderable={!!product.in_stock && product.price !== null}
+          />
+        </div>
       </div>
     </li>
   );
