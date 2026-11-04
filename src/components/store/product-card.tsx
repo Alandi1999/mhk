@@ -7,7 +7,7 @@ export type StoreProduct = {
   sku: string;
   name: string;
   brand: string | null;
-  base_price: number;
+  price: number | null;
   vat_rate: number;
   in_stock: boolean | null;
   imageUrl: string | null;
@@ -56,7 +56,7 @@ export function ProductCard({ product }: { product: StoreProduct }) {
             className="mt-1 self-start"
           />
         </div>
-        <PriceBlock net={product.base_price} vatRate={product.vat_rate} />
+        <PriceBlock net={product.price} vatRate={product.vat_rate} />
       </div>
     </li>
   );

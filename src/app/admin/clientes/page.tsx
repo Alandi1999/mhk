@@ -23,6 +23,8 @@ const ACTION_ERRORS: Record<string, string> = {
   "no-actualizado":
     "No se pudo actualizar el cliente. Puede que no tengas permiso o que ya haya cambiado. Recargá e intentá de nuevo.",
   propio: "No podés cambiar el estado de tu propia cuenta.",
+  "lista-no-asignada":
+    "No se pudo asignar la lista. Solo se asigna a clientes aprobados; recargá e intentá de nuevo.",
   invalido: "La solicitud no es válida. Recargá la página e intentá de nuevo.",
 };
 
@@ -41,12 +43,17 @@ export default async function ClientsPage({
   const supabase = await createClient();
   const pendingCount = await getPendingClientCount();
   // Pending: oldest first, so the longest wait is handled first.
-  const { data: clients, error } = await supabase
-    .from("profiles")
-    .select("id, razon_social, cuit, tax_condition, phone, status, created_at")
-    .eq("role", "cliente")
-    .eq("status", estado)
-    .order("created_at", { ascending: estado === "pending" });
+  const [{ data: clients, error }, { data: priceLists }] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select(
+        "id, razon_social, cuit, tax_condition, phone, status, created_at, price_list_id",
+      )
+      .eq("role", "cliente")
+      .eq("status", estado)
+      .order("created_at", { ascending: estado === "pending" }),
+    supabase.from("price_lists").select("id, name").order("name"),
+  ]);
 
   const estadoLabel = FILTERS.find((f) => f.value === estado)?.label ?? "";
 
@@ -103,6 +110,7 @@ export default async function ClientsPage({
           adminId={admin.id}
           estado={estado}
           now={new Date()}
+          priceLists={priceLists ?? []}
         />
       )}
     </PageContainer>

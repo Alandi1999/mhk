@@ -7,10 +7,17 @@ export function PriceBlock({
   vatRate,
   className,
 }: {
-  net: number;
+  net: number | null;
   vatRate: number;
   className?: string;
 }) {
+  if (net === null) {
+    return (
+      <p className={cn("text-sm text-ink-muted", className)}>
+        Consultar precio
+      </p>
+    );
+  }
   const vat = new Intl.NumberFormat("es-AR").format(vatRate);
   return (
     <div className={cn("flex flex-col gap-0.5", className)}>

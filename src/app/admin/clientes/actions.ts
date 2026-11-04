@@ -49,3 +49,41 @@ export async function approveClient(formData: FormData): Promise<void> {
 export async function rejectClient(formData: FormData): Promise<void> {
   await decide("rejected", formData);
 }
+
+const assignmentSchema = z.object({
+  id: z.uuid(),
+  // Empty = no list (base price).
+  priceListId: z.union([z.uuid(), z.literal("")]),
+});
+
+export async function assignPriceList(formData: FormData): Promise<void> {
+  // Server actions are public endpoints: always re-check admin here.
+  await requireProfile({ role: "admin" });
+
+  const estado = filterSchema.catch("pending").parse(formData.get("estado"));
+  const back = (error?: string) =>
+    `/admin/clientes?estado=${estado}${error ? `&error=${error}` : ""}`;
+  const parsed = assignmentSchema.safeParse({
+    id: formData.get("id"),
+    priceListId: formData.get("price_list_id") ?? "",
+  });
+  if (!parsed.success) redirect(back("invalido"));
+
+  const supabase = await createClient();
+  // RLS and the profile guard trigger are the final authority. RLS can filter
+  // the row out without an error, so check that a row was updated. Only
+  // approved clients get a list.
+  const { data, error } = await supabase
+    .from("profiles")
+    .update({ price_list_id: parsed.data.priceListId || null })
+    .eq("id", parsed.data.id)
+    .eq("role", "cliente")
+    .eq("status", "approved")
+    .select("id");
+
+  if (error || !data || data.length === 0) redirect(back("lista-no-asignada"));
+
+  revalidatePath("/admin/clientes");
+  revalidatePath("/admin/listas-de-precios");
+  redirect(back());
+}
