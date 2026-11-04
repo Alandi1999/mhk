@@ -5,7 +5,7 @@
 --
 -- Custom SQLSTATEs raised by place_order:
 --   MH001 empty cart | MH002 inactive/unknown product | MH003 insufficient stock
---   MH004 below the minimum order amount
+--   MH004 below the minimum order amount | MH006 profile without razón social
 -- cancel_order / admin_set_order_status: MH005 invalid state change.
 
 create type public.order_status as enum
@@ -135,6 +135,9 @@ begin
     raise exception 'only approved clients can place orders' using errcode = '42501';
   end if;
   select * into v_profile from public.profiles where id = v_uid;
+  if v_profile.razon_social is null or btrim(v_profile.razon_social) = '' then
+    raise exception 'the profile needs a razon social to place orders' using errcode = 'MH006';
+  end if;
 
   -- Lock the products in a fixed order (no deadlocks between concurrent orders).
   perform 1

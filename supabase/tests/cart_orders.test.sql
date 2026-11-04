@@ -2,7 +2,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
 
-select plan(30);
+select plan(31);
 
 -- Start from an empty catalog (the seed loads samples); rolled back with the test.
 alter table public.stock_movements disable trigger user;
@@ -49,6 +49,17 @@ select throws_ok($$insert into public.cart_items (user_id, product_id, quantity)
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-4000-8000-0000000000d4","role":"authenticated"}', true);
 select throws_ok($$insert into public.cart_items (product_id, quantity) values ('00000000-0000-4000-8000-000000000f02', 1)$$, '42501', null, 'cliente pendiente no usa carrito');
 select throws_ok($$select public.place_order()$$, '42501', null, 'cliente pendiente no hace pedidos');
+
+-- A client without razon social cannot order (handled error, not a raw NOT NULL failure)
+reset role;
+update public.profiles set razon_social = null where id = '00000000-0000-4000-8000-0000000000b2';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-4000-8000-0000000000b2","role":"authenticated"}', true);
+select throws_ok($$select public.place_order()$$, 'MH006', null, 'perfil sin razon social se rechaza con error propio');
+reset role;
+update public.profiles set razon_social = 'Cliente A' where id = '00000000-0000-4000-8000-0000000000b2';
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-4000-8000-0000000000b2","role":"authenticated"}', true);
 
 -- A places the order
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-4000-8000-0000000000b2","role":"authenticated"}', true);

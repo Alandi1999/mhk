@@ -58,6 +58,7 @@ describe("error messages", () => {
     expect(orderErrorMessage("MH001")).toMatch(/vacío/);
     expect(orderErrorMessage("MH003")).toMatch(/stock/i);
     expect(orderErrorMessage("MH004")).toMatch(/mínimo/);
+    expect(orderErrorMessage("MH006")).toMatch(/razón social/);
     expect(orderErrorMessage("23514")).toMatch(/stock/i);
   });
   it("falls back to a generic message", () => {
