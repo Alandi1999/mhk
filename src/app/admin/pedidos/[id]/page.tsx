@@ -13,6 +13,7 @@ import { TAX_CONDITION_LABELS } from "@/lib/auth/schemas";
 import { formatArs } from "@/lib/catalog/money";
 import { formatMovementDate } from "@/lib/catalog/stock";
 import { formatCuit } from "@/lib/cuit";
+import { formatPct } from "@/lib/promotions/format";
 import {
   STATUS_LABELS,
   adminCanCancel,
@@ -44,7 +45,9 @@ export default async function AdminOrderPage({
       supabase.from("orders").select("*").eq("id", id).maybeSingle(),
       supabase
         .from("order_items")
-        .select("id, sku, name, quantity, unit_price_net, line_net")
+        .select(
+          "id, sku, name, quantity, unit_price_net, line_net, line_discount",
+        )
         .eq("order_id", id)
         .order("sku"),
       supabase
@@ -119,6 +122,19 @@ export default async function AdminOrderPage({
           <dd className="break-words whitespace-pre-line">
             {order.note ?? "-"}
           </dd>
+          {order.coupon_code ? (
+            <>
+              <dt className="text-ink-muted">Cupón</dt>
+              <dd>
+                <span className="font-mono font-semibold">
+                  {order.coupon_code}
+                </span>{" "}
+                <span className="tabular-nums">
+                  ({formatPct(order.coupon_pct ?? 0)} de descuento)
+                </span>
+              </dd>
+            </>
+          ) : null}
           {order.status === "cancelled" ? (
             <>
               <dt className="text-ink-muted">Motivo de cancelación</dt>
@@ -169,6 +185,11 @@ export default async function AdminOrderPage({
                   </td>
                   <td className="px-4 py-3 text-right font-semibold whitespace-nowrap tabular-nums">
                     {formatArs(l.line_net)}
+                    {l.line_discount > 0 ? (
+                      <span className="block text-xs font-normal text-ink-muted">
+                        Cupón −{formatArs(l.line_discount)}
+                      </span>
+                    ) : null}
                   </td>
                 </tr>
               ))}
@@ -188,11 +209,37 @@ export default async function AdminOrderPage({
                   {formatArs(l.line_net)}
                 </span>
               </div>
+              {l.line_discount > 0 ? (
+                <p className="text-sm text-ink-muted tabular-nums">
+                  Cupón −{formatArs(l.line_discount)}
+                </p>
+              ) : null}
             </li>
           ))}
         </ul>
 
         <dl className="ml-auto grid w-full max-w-sm grid-cols-[1fr_auto] gap-x-6 gap-y-1 text-sm tabular-nums">
+          {order.discount_net > 0 ? (
+            <>
+              <dt className="text-ink-muted">Subtotal</dt>
+              <dd className="text-right">
+                {formatArs(order.subtotal_net + order.discount_net)}
+              </dd>
+              <dt className="text-ink-muted">
+                Descuento cupón
+                {order.coupon_code ? (
+                  <>
+                    {" "}
+                    <span className="font-mono">{order.coupon_code}</span>
+                    {order.coupon_pct !== null
+                      ? ` (${formatPct(order.coupon_pct)})`
+                      : ""}
+                  </>
+                ) : null}
+              </dt>
+              <dd className="text-right">−{formatArs(order.discount_net)}</dd>
+            </>
+          ) : null}
           <dt className="text-ink-muted">Subtotal neto</dt>
           <dd className="text-right">{formatArs(order.subtotal_net)}</dd>
           <dt className="text-ink-muted">IVA</dt>

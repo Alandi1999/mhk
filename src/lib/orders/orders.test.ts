@@ -61,6 +61,14 @@ describe("error messages", () => {
     expect(orderErrorMessage("MH006")).toMatch(/razón social/);
     expect(orderErrorMessage("23514")).toMatch(/stock/i);
   });
+  it("maps the coupon errors", () => {
+    expect(orderErrorMessage("MH007")).toBe(
+      "El cupón no existe, venció o ya no tiene usos disponibles.",
+    );
+    expect(orderErrorMessage("MH008")).toBe(
+      "El pedido no alcanza el mínimo para usar este cupón.",
+    );
+  });
   it("falls back to a generic message", () => {
     expect(orderErrorMessage("XXXXX")).toMatch(/No pudimos/);
     expect(orderErrorMessage(undefined)).toMatch(/No pudimos/);

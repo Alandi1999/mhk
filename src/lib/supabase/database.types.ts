@@ -100,6 +100,49 @@ export type Database = {
         };
         Relationships: [];
       };
+      coupons: {
+        Row: {
+          active: boolean;
+          code: string;
+          created_at: string;
+          discount_pct: number;
+          ends_at: string | null;
+          id: string;
+          max_uses: number | null;
+          min_order_net: number;
+          starts_at: string | null;
+          updated_at: string;
+          uses: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          active?: boolean;
+          code: string;
+          created_at?: string;
+          discount_pct: number;
+          ends_at?: string | null;
+          id?: string;
+          max_uses?: number | null;
+          min_order_net?: number;
+          starts_at?: string | null;
+          updated_at?: string;
+          uses?: number;
+        };
+        Update: {
+          active?: boolean;
+          code?: string;
+          created_at?: string;
+          discount_pct?: number;
+          ends_at?: string | null;
+          id?: string;
+          max_uses?: number | null;
+          min_order_net?: number;
+          starts_at?: string | null;
+          updated_at?: string;
+          uses?: number;
+        };
+        Relationships: [];
+      };
       order_events: {
         Row: {
           actor: string | null;
@@ -146,6 +189,7 @@ export type Database = {
       order_items: {
         Row: {
           id: string;
+          line_discount: number;
           line_net: number;
           name: string;
           order_id: string;
@@ -158,6 +202,7 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           id?: string;
+          line_discount?: number;
           line_net: number;
           name: string;
           order_id: string;
@@ -169,6 +214,7 @@ export type Database = {
         };
         Update: {
           id?: string;
+          line_discount?: number;
           line_net?: number;
           name?: string;
           order_id?: string;
@@ -206,12 +252,15 @@ export type Database = {
         Row: {
           cancel_reason: string | null;
           cancelled_at: string | null;
+          coupon_code: string | null;
+          coupon_pct: number | null;
           created_at: string;
           customer_cuit: string | null;
           customer_id: string;
           customer_razon_social: string;
           customer_tax_condition:
             Database["public"]["Enums"]["tax_condition"] | null;
+          discount_net: number;
           id: string;
           note: string | null;
           number: number;
@@ -225,12 +274,15 @@ export type Database = {
         Insert: {
           cancel_reason?: string | null;
           cancelled_at?: string | null;
+          coupon_code?: string | null;
+          coupon_pct?: number | null;
           created_at?: string;
           customer_cuit?: string | null;
           customer_id: string;
           customer_razon_social: string;
           customer_tax_condition?:
             Database["public"]["Enums"]["tax_condition"] | null;
+          discount_net?: number;
           id?: string;
           note?: string | null;
           number?: never;
@@ -243,12 +295,15 @@ export type Database = {
         Update: {
           cancel_reason?: string | null;
           cancelled_at?: string | null;
+          coupon_code?: string | null;
+          coupon_pct?: number | null;
           created_at?: string;
           customer_cuit?: string | null;
           customer_id?: string;
           customer_razon_social?: string;
           customer_tax_condition?:
             Database["public"]["Enums"]["tax_condition"] | null;
+          discount_net?: number;
           id?: string;
           note?: string | null;
           number?: never;
@@ -522,6 +577,81 @@ export type Database = {
           },
         ];
       };
+      promotions: {
+        Row: {
+          active: boolean;
+          category_id: string | null;
+          created_at: string;
+          discount_pct: number;
+          ends_at: string | null;
+          id: string;
+          min_qty: number;
+          name: string;
+          price_list_id: string | null;
+          product_id: string | null;
+          starts_at: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          active?: boolean;
+          category_id?: string | null;
+          created_at?: string;
+          discount_pct: number;
+          ends_at?: string | null;
+          id?: string;
+          min_qty?: number;
+          name: string;
+          price_list_id?: string | null;
+          product_id?: string | null;
+          starts_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          category_id?: string | null;
+          created_at?: string;
+          discount_pct?: number;
+          ends_at?: string | null;
+          id?: string;
+          min_qty?: number;
+          name?: string;
+          price_list_id?: string | null;
+          product_id?: string | null;
+          starts_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "promotions_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "promotions_price_list_id_fkey";
+            columns: ["price_list_id"];
+            isOneToOne: false;
+            referencedRelation: "price_lists";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "promotions_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "catalog_products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "promotions_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       settings: {
         Row: {
           id: boolean;
@@ -613,8 +743,10 @@ export type Database = {
           description: string | null;
           id: string;
           in_stock: boolean | null;
+          list_price: number | null;
           name: string;
           price: number | null;
+          rule_name: string | null;
           sku: string;
           vat_rate: number;
         };
@@ -642,18 +774,46 @@ export type Database = {
         Args: { p_order_id: string; p_reason?: string };
         Returns: undefined;
       };
-      effective_price: {
-        Args: { p_product_id: string; p_user_id: string };
-        Returns: number;
-      };
+      cart_quote: { Args: { p_coupon?: string }; Returns: Json };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_approved_client: {
         Args: Record<PropertyKey, never>;
         Returns: boolean;
       };
       is_valid_cuit: { Args: { p_cuit: string }; Returns: boolean };
-      place_order: { Args: { p_note?: string }; Returns: string };
+      my_price: {
+        Args: { p_product_id: string; p_qty: number };
+        Returns: {
+          list_price: number;
+          price: number;
+          rule_name: string;
+        }[];
+      };
+      place_order: {
+        Args: { p_coupon?: string; p_note?: string };
+        Returns: string;
+      };
+      price_breakdown: {
+        Args: { p_product_id: string; p_qty: number; p_user_id: string };
+        Returns: {
+          list_price: number;
+          price: number;
+          rule_name: string;
+        }[];
+      };
+      price_cart: {
+        Args: { p_coupon?: string; p_user_id: string };
+        Returns: Json;
+      };
       product_is_visible: { Args: { p_product_id: string }; Returns: boolean };
+      product_volume_tiers: {
+        Args: { p_product_id: string };
+        Returns: {
+          min_qty: number;
+          price: number;
+          rule_name: string;
+        }[];
+      };
     };
     Enums: {
       account_status: "pending" | "approved" | "rejected";

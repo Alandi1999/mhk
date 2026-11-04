@@ -77,6 +77,8 @@ const ERROR_MESSAGES: Record<string, string> = {
   MH003: "No hay stock suficiente de algún producto. Revisá las cantidades.",
   "23514": "No hay stock suficiente de algún producto. Revisá las cantidades.",
   MH004: "El pedido no alcanza el mínimo de compra.",
+  MH007: "El cupón no existe, venció o ya no tiene usos disponibles.",
+  MH008: "El pedido no alcanza el mínimo para usar este cupón.",
   MH006: "Completá la razón social de tu cuenta antes de hacer pedidos.",
   MH005: "El pedido no puede cambiar a ese estado.",
   "42501": "No tenés permiso para hacer esto.",

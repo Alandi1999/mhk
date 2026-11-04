@@ -98,3 +98,15 @@ insert into public.price_lists (id, name, discount_pct) values
 insert into public.price_list_items (price_list_id, product_id, price) values
   ('a1a1a1a1-0000-4000-8000-000000000001', 'b0b0b0b0-0000-4000-8000-000000000005', 2800.00),
   ('a1a1a1a1-0000-4000-8000-000000000002', 'b0b0b0b0-0000-4000-8000-000000000003', 38000.00);
+
+-- Sample promotions: a plain one on a category, a volume discount on a product
+-- ("from 10 units") and one only for the sample "Talleres" price list.
+insert into public.promotions (id, name, discount_pct, min_qty, product_id, category_id, price_list_id) values
+  ('9d9d9d9d-0000-4000-8000-000000000001', 'Frenos al 15%', 15, 1, null, 'ca7ca7ca-0000-4000-8000-000000000001', null),
+  ('9d9d9d9d-0000-4000-8000-000000000002', 'Bujías por docena', 20, 10, 'b0b0b0b0-0000-4000-8000-000000000005', null, null),
+  ('9d9d9d9d-0000-4000-8000-000000000003', 'Talleres: filtros 12%', 12, 1, null, 'ca7ca7ca-0000-4000-8000-000000000003', 'a1a1a1a1-0000-4000-8000-000000000001');
+
+-- Sample coupons (pgTAP fixtures use DIEZ, GRANDE, UNICO and VENCIDO: keep them out of here).
+insert into public.coupons (code, discount_pct, min_order_net, max_uses) values
+  ('BIENVENIDO10', 10, 0, null),
+  ('MAYORISTA5', 5, 100000, 20);

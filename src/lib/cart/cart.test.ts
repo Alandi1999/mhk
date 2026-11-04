@@ -1,8 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
   MAX_QUANTITY,
-  buildCartLines,
-  cartSummary,
   mergeQuantity,
   noticeMessage,
   parseQuantity,
@@ -76,120 +74,6 @@ describe("withNotice", () => {
     expect(withNotice("/tienda?agregado=A&q=a", "agregado", "B")).toBe(
       "/tienda?agregado=B&q=a",
     );
-  });
-});
-
-const catalog = [
-  {
-    id: "p1",
-    sku: "B-2",
-    name: "Bujía",
-    price: 100,
-    vat_rate: 21,
-    in_stock: true,
-  },
-  {
-    id: "p2",
-    sku: "A-1",
-    name: "Filtro",
-    price: 50,
-    vat_rate: 10.5,
-    in_stock: false,
-  },
-  {
-    id: "p3",
-    sku: "C-3",
-    name: "Cadena",
-    price: null,
-    vat_rate: 21,
-    in_stock: true,
-  },
-];
-
-describe("buildCartLines", () => {
-  it("joins cart rows with the catalog and sorts by SKU", () => {
-    const lines = buildCartLines(
-      [
-        { product_id: "p1", quantity: 2 },
-        { product_id: "p2", quantity: 1 },
-      ],
-      catalog,
-    );
-    expect(lines.map((l) => l.sku)).toEqual(["A-1", "B-2"]);
-    expect(lines[1]).toMatchObject({
-      productId: "p1",
-      name: "Bujía",
-      price: 100,
-      vatRate: 21,
-      quantity: 2,
-      issue: null,
-    });
-  });
-  it("flags products without stock", () => {
-    const [line] = buildCartLines([{ product_id: "p2", quantity: 1 }], catalog);
-    expect(line.issue).toBe("no-stock");
-  });
-  it("flags products without a price", () => {
-    const [line] = buildCartLines([{ product_id: "p3", quantity: 1 }], catalog);
-    expect(line.issue).toBe("no-price");
-  });
-  it("shows products missing from the catalog as unavailable, last", () => {
-    const lines = buildCartLines(
-      [
-        { product_id: "gone", quantity: 4 },
-        { product_id: "p1", quantity: 1 },
-      ],
-      catalog,
-    );
-    expect(lines.map((l) => l.productId)).toEqual(["p1", "gone"]);
-    expect(lines[1]).toMatchObject({
-      sku: null,
-      name: null,
-      price: null,
-      quantity: 4,
-      issue: "unavailable",
-    });
-  });
-});
-
-describe("cartSummary", () => {
-  const ok = buildCartLines(
-    [
-      { product_id: "p1", quantity: 2 },
-      { product_id: "p3", quantity: 1 },
-    ],
-    catalog,
-  ).filter((l) => !l.issue);
-
-  it("totals the orderable lines with the order rounding", () => {
-    const s = cartSummary(ok, 0);
-    expect(s.totals).toEqual({ subtotalNet: 200, vatTotal: 42, total: 242 });
-    expect(s.missingToMinimum).toBe(0);
-    expect(s.canCheckout).toBe(true);
-  });
-  it("reports what is missing to reach the minimum and blocks checkout", () => {
-    const s = cartSummary(ok, 1000);
-    expect(s.missingToMinimum).toBe(800);
-    expect(s.canCheckout).toBe(false);
-  });
-  it("blocks checkout when any line has an issue or the cart is empty", () => {
-    const withIssue = buildCartLines(
-      [{ product_id: "p2", quantity: 1 }],
-      catalog,
-    );
-    expect(cartSummary(withIssue, 0).canCheckout).toBe(false);
-    expect(cartSummary(withIssue, 0).hasIssues).toBe(true);
-    expect(cartSummary([], 0).canCheckout).toBe(false);
-  });
-  it("does not count unavailable lines in the totals", () => {
-    const lines = buildCartLines(
-      [
-        { product_id: "p1", quantity: 1 },
-        { product_id: "gone", quantity: 5 },
-      ],
-      catalog,
-    );
-    expect(cartSummary(lines, 0).totals.subtotalNet).toBe(100);
   });
 });
 

@@ -33,6 +33,18 @@ const CATALOG_SECTIONS = [
       "Descuentos por porcentaje y precios puntuales para cada tipo de cliente.",
   },
   {
+    href: "/admin/promociones",
+    label: "Promociones",
+    description:
+      "Descuentos por categoría, producto o cliente, y por volumen, con vigencia.",
+  },
+  {
+    href: "/admin/cupones",
+    label: "Cupones",
+    description:
+      "Códigos de descuento para el pedido, con mínimo, límite de usos y vigencia.",
+  },
+  {
     href: "/admin/configuracion",
     label: "Configuración",
     description: "Monto mínimo de compra para los pedidos.",
