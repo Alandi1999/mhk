@@ -32,7 +32,7 @@ export default async function StoreProductPage({
   const { data: product } = await supabase
     .from("catalog_products")
     .select(
-      "id, sku, name, description, brand, category_id, base_price, vat_rate, in_stock",
+      "id, sku, name, description, brand, category_id, price, vat_rate, in_stock",
     )
     .eq("sku", sku)
     .maybeSingle();
@@ -122,7 +122,7 @@ export default async function StoreProductPage({
             inStock={!!product.in_stock}
             className="self-start"
           />
-          <PriceBlock net={product.base_price} vatRate={product.vat_rate} />
+          <PriceBlock net={product.price} vatRate={product.vat_rate} />
           {/* Phase 4: ordering controls go here. */}
         </section>
       </div>

@@ -56,6 +56,75 @@ export type Database = {
         };
         Relationships: [];
       };
+      price_list_items: {
+        Row: {
+          price: number;
+          price_list_id: string;
+          product_id: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          price: number;
+          price_list_id: string;
+          product_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          price?: number;
+          price_list_id?: string;
+          product_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "price_list_items_price_list_id_fkey";
+            columns: ["price_list_id"];
+            isOneToOne: false;
+            referencedRelation: "price_lists";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "price_list_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "catalog_products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "price_list_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      price_lists: {
+        Row: {
+          created_at: string;
+          discount_pct: number;
+          id: string;
+          name: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          discount_pct?: number;
+          id?: string;
+          name: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          discount_pct?: number;
+          id?: string;
+          name?: string;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       product_compatibility: {
         Row: {
           id: string;
@@ -199,6 +268,7 @@ export type Database = {
           cuit: string | null;
           id: string;
           phone: string | null;
+          price_list_id: string | null;
           razon_social: string | null;
           role: Database["public"]["Enums"]["user_role"];
           status: Database["public"]["Enums"]["account_status"];
@@ -211,6 +281,7 @@ export type Database = {
           cuit?: string | null;
           id: string;
           phone?: string | null;
+          price_list_id?: string | null;
           razon_social?: string | null;
           role?: Database["public"]["Enums"]["user_role"];
           status?: Database["public"]["Enums"]["account_status"];
@@ -222,13 +293,22 @@ export type Database = {
           cuit?: string | null;
           id?: string;
           phone?: string | null;
+          price_list_id?: string | null;
           razon_social?: string | null;
           role?: Database["public"]["Enums"]["user_role"];
           status?: Database["public"]["Enums"]["account_status"];
           tax_condition?: Database["public"]["Enums"]["tax_condition"] | null;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "profiles_price_list_id_fkey";
+            columns: ["price_list_id"];
+            isOneToOne: false;
+            referencedRelation: "price_lists";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       stock_movements: {
         Row: {
@@ -287,39 +367,17 @@ export type Database = {
     Views: {
       catalog_products: {
         Row: {
-          base_price: number;
           brand: string | null;
           category_id: string | null;
           description: string | null;
           id: string;
           in_stock: boolean | null;
           name: string;
+          price: number | null;
           sku: string;
           vat_rate: number;
         };
         ComputedFields: never;
-        Insert: {
-          base_price?: number | null;
-          brand?: string | null;
-          category_id?: string | null;
-          description?: string | null;
-          id?: string | null;
-          in_stock?: never;
-          name?: string | null;
-          sku?: string | null;
-          vat_rate?: number | null;
-        };
-        Update: {
-          base_price?: number | null;
-          brand?: string | null;
-          category_id?: string | null;
-          description?: string | null;
-          id?: string | null;
-          in_stock?: never;
-          name?: string | null;
-          sku?: string | null;
-          vat_rate?: number | null;
-        };
         Relationships: [
           {
             foreignKeyName: "products_category_id_fkey";
