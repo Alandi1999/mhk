@@ -10,6 +10,8 @@ export type StoreProduct = {
   name: string;
   brand: string | null;
   price: number | null;
+  list_price: number | null;
+  rule_name: string | null;
   vat_rate: number;
   in_stock: boolean | null;
   imageUrl: string | null;
@@ -66,7 +68,12 @@ export function ProductCard({
           />
         </div>
         <div className="flex flex-col gap-3 md:items-end">
-          <PriceBlock net={product.price} vatRate={product.vat_rate} />
+          <PriceBlock
+            net={product.price}
+            vatRate={product.vat_rate}
+            listPrice={product.list_price}
+            ruleName={product.rule_name}
+          />
           <AddToCartForm
             productId={product.id}
             sku={product.sku}

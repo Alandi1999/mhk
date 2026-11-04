@@ -8,6 +8,7 @@ import { AddToCartForm } from "@/components/store/add-to-cart-form";
 import { AvailabilityBadge } from "@/components/store/availability-badge";
 import { PriceBlock } from "@/components/store/price-block";
 import { requireProfile } from "@/lib/auth/session";
+import { formatArs, grossPrice } from "@/lib/catalog/money";
 import { IMAGE_BUCKET } from "@/lib/catalog/images";
 import { isValidSku, normalizeSku } from "@/lib/catalog/sku";
 import { noticeMessage } from "@/lib/cart/cart";
@@ -39,13 +40,13 @@ export default async function StoreProductPage({
   const { data: product } = await supabase
     .from("catalog_products")
     .select(
-      "id, sku, name, description, brand, category_id, price, vat_rate, in_stock",
+      "id, sku, name, description, brand, category_id, price, list_price, rule_name, vat_rate, in_stock",
     )
     .eq("sku", sku)
     .maybeSingle();
   if (!product) notFound();
 
-  const [category, compat, images] = await Promise.all([
+  const [category, compat, images, tiers] = await Promise.all([
     product.category_id
       ? supabase
           .from("categories")
@@ -65,7 +66,9 @@ export default async function StoreProductPage({
       .select("id, storage_path")
       .eq("product_id", product.id)
       .order("position"),
+    supabase.rpc("product_volume_tiers", { p_product_id: product.id }),
   ]);
+  const tierRows = tiers.data ?? [];
   const imageUrls = (images.data ?? []).map((image) => ({
     id: image.id,
     url: supabase.storage.from(IMAGE_BUCKET).getPublicUrl(image.storage_path)
@@ -129,7 +132,12 @@ export default async function StoreProductPage({
             inStock={!!product.in_stock}
             className="self-start"
           />
-          <PriceBlock net={product.price} vatRate={product.vat_rate} />
+          <PriceBlock
+            net={product.price}
+            vatRate={product.vat_rate}
+            listPrice={product.list_price}
+            ruleName={product.rule_name}
+          />
           <AddToCartForm
             productId={product.id}
             sku={product.sku}
@@ -159,6 +167,58 @@ export default async function StoreProductPage({
           {cartError ? <FormAlert>{noticeMessage(cartError)}</FormAlert> : null}
         </section>
       </div>
+
+      {tierRows.length > 0 ? (
+        <section
+          aria-label="Descuentos por cantidad"
+          className="flex flex-col gap-3 border-t border-rule pt-6"
+        >
+          <h2 className="text-xl font-bold text-ink">
+            Descuentos por cantidad
+          </h2>
+          <div className="overflow-x-auto rounded-lg border border-rule bg-surface">
+            <table className="w-full text-left text-sm">
+              <caption className="sr-only">
+                Precio unitario según la cantidad
+              </caption>
+              <thead className="bg-surface-2 text-ink-muted">
+                <tr>
+                  <th scope="col" className="px-3 py-2 font-semibold">
+                    Cantidad
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-2 text-right font-semibold"
+                  >
+                    Precio neto c/u
+                  </th>
+                  <th
+                    scope="col"
+                    className="px-3 py-2 text-right font-semibold"
+                  >
+                    Con IVA c/u
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {tierRows.map((tier) => (
+                  <tr key={tier.min_qty} className="border-t border-rule">
+                    <td className="px-3 py-2 text-ink tabular-nums">
+                      Desde {tier.min_qty} unidades
+                    </td>
+                    <td className="px-3 py-2 text-right font-bold text-ink tabular-nums">
+                      {formatArs(tier.price)}
+                    </td>
+                    <td className="px-3 py-2 text-right text-ink tabular-nums">
+                      {formatArs(grossPrice(tier.price, product.vat_rate))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
 
       {product.description ? (
         <section className="flex flex-col gap-2 border-t border-rule pt-6">

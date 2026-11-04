@@ -1,4 +1,4 @@
-import { cartTotals, orderErrorMessage } from "@/lib/orders/orders";
+import { orderErrorMessage } from "@/lib/orders/orders";
 
 /** Mirrors the `quantity between 1 and 9999` check on cart_items. */
 export const MAX_QUANTITY = 9999;
@@ -41,91 +41,6 @@ export function withNotice(path: string, key: string, value: string): string {
   const params = new URLSearchParams(query);
   params.set(key, value);
   return `${base}?${params.toString()}`;
-}
-
-export type CatalogRow = {
-  id: string;
-  sku: string;
-  name: string;
-  price: number | null;
-  vat_rate: number;
-  in_stock: boolean | null;
-};
-
-export type CartRow = { product_id: string; quantity: number };
-
-export type CartIssue = "unavailable" | "no-stock" | "no-price";
-
-export type CartLine = {
-  productId: string;
-  quantity: number;
-  sku: string | null;
-  name: string | null;
-  price: number | null;
-  vatRate: number;
-  issue: CartIssue | null;
-};
-
-/**
- * Joins cart rows with what the client can see in catalog_products. A product
- * missing from the catalog is inactive (or gone) and is kept as "unavailable"
- * so the buyer can remove it. Clients only see an in-stock flag, never counts.
- */
-export function buildCartLines(
-  cart: CartRow[],
-  catalog: CatalogRow[],
-): CartLine[] {
-  const byId = new Map(catalog.map((p) => [p.id, p]));
-  const lines: CartLine[] = cart.map((row) => {
-    const p = byId.get(row.product_id);
-    if (!p) {
-      return {
-        productId: row.product_id,
-        quantity: row.quantity,
-        sku: null,
-        name: null,
-        price: null,
-        vatRate: 0,
-        issue: "unavailable",
-      };
-    }
-    return {
-      productId: p.id,
-      quantity: row.quantity,
-      sku: p.sku,
-      name: p.name,
-      price: p.price,
-      vatRate: p.vat_rate,
-      issue: p.price === null ? "no-price" : p.in_stock ? null : "no-stock",
-    };
-  });
-  return lines.sort((a, b) => {
-    if (a.sku === null || b.sku === null) {
-      return a.sku === b.sku ? 0 : a.sku === null ? 1 : -1;
-    }
-    return a.sku.localeCompare(b.sku);
-  });
-}
-
-/** Totals of the priced lines plus whether the order can be placed. */
-export function cartSummary(lines: CartLine[], minOrderNet: number) {
-  const priced = lines.flatMap((l) =>
-    l.price === null
-      ? []
-      : [{ price: l.price, quantity: l.quantity, vatRate: l.vatRate }],
-  );
-  const totals = cartTotals(priced);
-  const missingToMinimum = Math.max(
-    0,
-    Math.round((minOrderNet - totals.subtotalNet) * 100) / 100,
-  );
-  const hasIssues = lines.some((l) => l.issue !== null);
-  return {
-    totals,
-    missingToMinimum,
-    hasIssues,
-    canCheckout: lines.length > 0 && !hasIssues && missingToMinimum === 0,
-  };
 }
 
 const NOTICE_MESSAGES: Record<string, string> = {

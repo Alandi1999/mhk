@@ -25,7 +25,8 @@ import { createClient } from "@/lib/supabase/server";
 
 export const metadata: Metadata = { title: "Tienda | MHK Moto Repuestos" };
 
-const COLUMNS = "id, sku, name, brand, price, vat_rate, in_stock";
+const COLUMNS =
+  "id, sku, name, brand, price, list_price, rule_name, vat_rate, in_stock";
 
 function one(value: string | string[] | undefined): string {
   return typeof value === "string" ? value : "";
@@ -66,6 +67,8 @@ export default async function ShopPage({ searchParams }: PageProps<"/tienda">) {
     name: string;
     brand: string | null;
     price: number | null;
+    list_price: number | null;
+    rule_name: string | null;
     vat_rate: number;
     in_stock: boolean | null;
   } | null = null;

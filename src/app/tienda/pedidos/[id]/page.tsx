@@ -37,7 +37,7 @@ export default async function OrderPage({
   const { data: order } = await supabase
     .from("orders")
     .select(
-      "id, number, status, note, subtotal_net, vat_total, total, cancel_reason, created_at",
+      "id, number, status, note, subtotal_net, vat_total, total, cancel_reason, created_at, coupon_code, coupon_pct, discount_net",
     )
     .eq("id", id)
     .maybeSingle();
@@ -46,7 +46,9 @@ export default async function OrderPage({
   const [items, events] = await Promise.all([
     supabase
       .from("order_items")
-      .select("id, sku, name, quantity, unit_price_net, line_net")
+      .select(
+        "id, sku, name, quantity, unit_price_net, line_net, line_discount",
+      )
       .eq("order_id", order.id)
       .order("sku"),
     supabase
@@ -122,6 +124,11 @@ export default async function OrderPage({
                   {formatArs(line.line_net)}
                 </span>
               </p>
+              {line.line_discount > 0 ? (
+                <p className="text-sm text-ink-muted tabular-nums">
+                  Descuento cupón: -{formatArs(line.line_discount)}
+                </p>
+              ) : null}
             </li>
           ))}
         </ul>
@@ -160,8 +167,15 @@ export default async function OrderPage({
                   <td className="px-3 py-3 text-right tabular-nums">
                     {formatArs(line.unit_price_net)}
                   </td>
-                  <td className="px-3 py-3 text-right font-bold text-ink tabular-nums">
-                    {formatArs(line.line_net)}
+                  <td className="px-3 py-3 text-right tabular-nums">
+                    <span className="font-bold text-ink">
+                      {formatArs(line.line_net)}
+                    </span>
+                    {line.line_discount > 0 ? (
+                      <span className="block text-ink-muted">
+                        Cupón: -{formatArs(line.line_discount)}
+                      </span>
+                    ) : null}
                   </td>
                 </tr>
               ))}
@@ -170,6 +184,26 @@ export default async function OrderPage({
         </div>
 
         <dl className="flex flex-col gap-1 rounded-lg border border-rule bg-surface p-4 text-sm tabular-nums lg:ml-auto lg:w-96">
+          {order.coupon_code ? (
+            <>
+              <div className="flex justify-between gap-4">
+                <dt className="text-ink-muted">Subtotal</dt>
+                <dd className="text-ink">
+                  {formatArs(order.subtotal_net + order.discount_net)}
+                </dd>
+              </div>
+              <div className="flex justify-between gap-4">
+                <dt className="text-ink-muted">
+                  Descuento cupón{" "}
+                  <span className="font-mono">{order.coupon_code}</span>
+                  {order.coupon_pct !== null
+                    ? ` (${new Intl.NumberFormat("es-AR", { maximumFractionDigits: 2 }).format(order.coupon_pct)}%)`
+                    : ""}
+                </dt>
+                <dd className="text-ink">-{formatArs(order.discount_net)}</dd>
+              </div>
+            </>
+          ) : null}
           <div className="flex justify-between gap-4">
             <dt className="text-ink-muted">Subtotal neto</dt>
             <dd className="text-ink">{formatArs(order.subtotal_net)}</dd>

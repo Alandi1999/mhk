@@ -1,22 +1,26 @@
-import { TriangleAlert, Trash2 } from "lucide-react";
+import { CircleCheck, TriangleAlert, Trash2 } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { FormAlert } from "@/components/auth/form-alert";
 import { PageContainer } from "@/components/shell/page-container";
+import { PromoBadge } from "@/components/store/promo-badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { requireProfile } from "@/lib/auth/session";
 import { formatArs } from "@/lib/catalog/money";
+import { noticeMessage } from "@/lib/cart/cart";
 import {
-  buildCartLines,
-  cartSummary,
-  noticeMessage,
+  couponNotice,
+  isDiscounted,
+  lineIssue,
+  normalizeCoupon,
+  parseQuote,
+  quoteSummary,
   type CartIssue,
-  type CartLine,
-} from "@/lib/cart/cart";
-import { cartTotals } from "@/lib/orders/orders";
+  type QuoteLine,
+} from "@/lib/cart/quote";
 import { createClient } from "@/lib/supabase/server";
 import { placeOrder, removeFromCart, setCartQuantity } from "./actions";
 
@@ -25,22 +29,21 @@ export const metadata: Metadata = { title: "Carrito | MHK Moto Repuestos" };
 const ISSUE_TEXT: Record<CartIssue, string> = {
   unavailable: "Este repuesto ya no está disponible. Quitalo para poder pedir.",
   "no-stock": "Sin stock. Quitalo o esperá a que vuelva a haber.",
-  "no-price": "Sin precio publicado. Consultanos antes de pedirlo.",
 };
 
-function lineNet(line: CartLine): number | null {
-  if (line.price === null) return null;
-  return cartTotals([
-    { price: line.price, quantity: line.quantity, vatRate: line.vatRate },
-  ]).subtotalNet;
+type Line = QuoteLine & { issue: CartIssue | null };
+
+function CouponField({ coupon }: { coupon: string | null }) {
+  return coupon ? <input type="hidden" name="cupon" value={coupon} /> : null;
 }
 
-function QuantityForm({ line }: { line: CartLine }) {
+function QuantityForm({ line, coupon }: { line: Line; coupon: string | null }) {
   if (line.issue === "unavailable") return null;
-  const id = `qty-${line.productId}`;
+  const id = `qty-${line.product_id}`;
   return (
     <form action={setCartQuantity} className="flex items-end gap-2">
-      <input type="hidden" name="product_id" value={line.productId} />
+      <input type="hidden" name="product_id" value={line.product_id} />
+      <CouponField coupon={coupon} />
       <div className="flex flex-col gap-1">
         <Label htmlFor={id} className="text-sm text-ink-muted">
           Cantidad<span className="sr-only"> de {line.sku}</span>
@@ -65,19 +68,20 @@ function QuantityForm({ line }: { line: CartLine }) {
   );
 }
 
-function RemoveForm({ line }: { line: CartLine }) {
+function RemoveForm({ line, coupon }: { line: Line; coupon: string | null }) {
   return (
     <form action={removeFromCart}>
-      <input type="hidden" name="product_id" value={line.productId} />
+      <input type="hidden" name="product_id" value={line.product_id} />
+      <CouponField coupon={coupon} />
       <Button type="submit" variant="ghost">
         <Trash2 aria-hidden="true" />
-        Quitar<span className="sr-only"> {line.sku ?? "producto"}</span>
+        Quitar<span className="sr-only"> {line.sku}</span>
       </Button>
     </form>
   );
 }
 
-function Issue({ line }: { line: CartLine }) {
+function Issue({ line }: { line: Line }) {
   if (!line.issue) return null;
   return (
     <p className="flex items-start gap-1.5 text-sm font-medium text-danger-strong">
@@ -87,15 +91,50 @@ function Issue({ line }: { line: CartLine }) {
   );
 }
 
-function LineTitle({ line }: { line: CartLine }) {
+function LineTitle({ line }: { line: Line }) {
   return (
     <div className="flex min-w-0 flex-col gap-1">
-      <p className="font-mono text-lg font-bold text-ink">
-        {line.sku ?? "Repuesto no disponible"}
-      </p>
-      {line.name ? <p className="text-base text-ink">{line.name}</p> : null}
+      <p className="font-mono text-lg font-bold text-ink">{line.sku}</p>
+      <p className="text-base text-ink">{line.name}</p>
       <Issue line={line} />
     </div>
+  );
+}
+
+/** Unit price, with the list price struck through and the rule when one won. */
+function UnitPrice({ line, align }: { line: Line; align: "left" | "right" }) {
+  const discounted = isDiscounted(line.unit_price, line.list_price);
+  return (
+    <div
+      className={
+        align === "right"
+          ? "flex flex-col items-end gap-1"
+          : "flex flex-col items-start gap-1"
+      }
+    >
+      {discounted && line.list_price !== null ? (
+        <s className="text-sm text-ink-muted tabular-nums">
+          <span className="sr-only">Precio de lista: </span>
+          {formatArs(line.list_price)}
+        </s>
+      ) : null}
+      <span className="tabular-nums">{formatArs(line.unit_price)}</span>
+      {discounted && line.rule_name ? (
+        <PromoBadge name={line.rule_name} />
+      ) : null}
+    </div>
+  );
+}
+
+function WarningNote({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      role="status"
+      className="flex items-start gap-2 rounded-md bg-warning-tint px-3 py-2.5 text-sm font-medium text-warning"
+    >
+      <TriangleAlert aria-hidden="true" className="mt-0.5 size-4 shrink-0" />
+      <span>{children}</span>
+    </p>
   );
 }
 
@@ -105,31 +144,35 @@ export default async function CartPage({
   await requireProfile({ role: "cliente" });
   const params = await searchParams;
   const errorCode = typeof params.error === "string" ? params.error : "";
+  const coupon = normalizeCoupon(params.cupon);
 
   const supabase = await createClient();
-  const [cart, settings] = await Promise.all([
-    supabase
-      .from("cart_items")
-      .select("product_id, quantity")
-      .order("updated_at", { ascending: false }),
+  const [quoteRes, settings] = await Promise.all([
+    supabase.rpc("cart_quote", { p_coupon: coupon ?? undefined }),
     supabase.from("settings").select("min_order_net").maybeSingle(),
   ]);
-  const cartRows = cart.data ?? [];
+  const quote = quoteRes.error ? null : parseQuote(quoteRes.data);
+  const minOrder = settings.data?.min_order_net ?? 0;
+
+  // Stock is only exposed to clients as a flag, through the catalog view.
   const { data: catalog } =
-    cartRows.length > 0
+    quote && quote.lines.length > 0
       ? await supabase
           .from("catalog_products")
-          .select("id, sku, name, price, vat_rate, in_stock")
+          .select("id, in_stock")
           .in(
             "id",
-            cartRows.map((r) => r.product_id),
+            quote.lines.map((l) => l.product_id),
           )
       : { data: [] };
-
-  const minOrder = settings.data?.min_order_net ?? 0;
-  const lines = buildCartLines(cartRows, catalog ?? []);
-  const summary = cartSummary(lines, minOrder);
-  const loadFailed = !!cart.error;
+  const stockById = new Map((catalog ?? []).map((p) => [p.id, p.in_stock]));
+  const lines: Line[] = (quote?.lines ?? []).map((l) => ({
+    ...l,
+    issue: lineIssue(l, stockById.get(l.product_id) ?? undefined),
+  }));
+  const hasIssues = lines.some((l) => l.issue !== null);
+  const summary = quote ? quoteSummary(quote, hasIssues, minOrder) : null;
+  const notice = quote ? couponNotice(quote.coupon) : { kind: "none" as const };
 
   return (
     <PageContainer
@@ -138,7 +181,7 @@ export default async function CartPage({
     >
       {errorCode ? <FormAlert>{noticeMessage(errorCode)}</FormAlert> : null}
 
-      {loadFailed ? (
+      {!quote || !summary ? (
         <FormAlert>No pudimos cargar tu carrito. Probá de nuevo.</FormAlert>
       ) : lines.length === 0 ? (
         <div className="flex flex-col items-start gap-3 rounded-lg border border-rule bg-surface px-4 py-10">
@@ -154,29 +197,27 @@ export default async function CartPage({
             aria-label="Productos del carrito"
             className="flex flex-col gap-3 lg:hidden"
           >
-            {lines.map((line) => {
-              const net = lineNet(line);
-              return (
-                <li
-                  key={line.productId}
-                  className="flex flex-col gap-3 rounded-lg border border-rule bg-surface p-3"
-                >
-                  <LineTitle line={line} />
-                  {net !== null && line.price !== null ? (
-                    <p className="text-sm text-ink-muted tabular-nums">
-                      {formatArs(line.price)} c/u ·{" "}
-                      <span className="font-bold text-ink">
-                        {formatArs(net)}
-                      </span>
-                    </p>
-                  ) : null}
-                  <div className="flex flex-wrap items-end justify-between gap-2">
-                    <QuantityForm line={line} />
-                    <RemoveForm line={line} />
-                  </div>
-                </li>
-              );
-            })}
+            {lines.map((line) => (
+              <li
+                key={line.product_id}
+                className="flex flex-col gap-3 rounded-lg border border-rule bg-surface p-3"
+              >
+                <LineTitle line={line} />
+                <div className="flex flex-col gap-1 text-sm text-ink-muted">
+                  <UnitPrice line={line} align="left" />
+                  <p className="tabular-nums">
+                    {line.quantity} u. ·{" "}
+                    <span className="font-bold text-ink">
+                      {formatArs(line.line_net)}
+                    </span>
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-end justify-between gap-2">
+                  <QuantityForm line={line} coupon={coupon} />
+                  <RemoveForm line={line} coupon={coupon} />
+                </div>
+              </li>
+            ))}
           </ul>
 
           <div className="hidden overflow-hidden rounded-lg border border-rule bg-surface lg:block">
@@ -208,31 +249,28 @@ export default async function CartPage({
                 </tr>
               </thead>
               <tbody>
-                {lines.map((line) => {
-                  const net = lineNet(line);
-                  return (
-                    <tr
-                      key={line.productId}
-                      className="border-t border-rule align-top"
-                    >
-                      <td className="px-3 py-3">
-                        <LineTitle line={line} />
-                      </td>
-                      <td className="px-3 py-3 text-right tabular-nums">
-                        {line.price !== null ? formatArs(line.price) : "-"}
-                      </td>
-                      <td className="px-3 py-3">
-                        <QuantityForm line={line} />
-                      </td>
-                      <td className="px-3 py-3 text-right font-bold text-ink tabular-nums">
-                        {net !== null ? formatArs(net) : "-"}
-                      </td>
-                      <td className="px-3 py-3">
-                        <RemoveForm line={line} />
-                      </td>
-                    </tr>
-                  );
-                })}
+                {lines.map((line) => (
+                  <tr
+                    key={line.product_id}
+                    className="border-t border-rule align-top"
+                  >
+                    <td className="px-3 py-3">
+                      <LineTitle line={line} />
+                    </td>
+                    <td className="px-3 py-3">
+                      <UnitPrice line={line} align="right" />
+                    </td>
+                    <td className="px-3 py-3">
+                      <QuantityForm line={line} coupon={coupon} />
+                    </td>
+                    <td className="px-3 py-3 text-right font-bold text-ink tabular-nums">
+                      {formatArs(line.line_net)}
+                    </td>
+                    <td className="px-3 py-3">
+                      <RemoveForm line={line} coupon={coupon} />
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -241,56 +279,97 @@ export default async function CartPage({
             aria-label="Resumen del pedido"
             className="flex flex-col gap-4 rounded-lg border border-rule bg-surface p-4 lg:ml-auto lg:w-96"
           >
+            <form method="get" className="flex flex-col gap-2">
+              <Label htmlFor="cupon">Cupón de descuento</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="cupon"
+                  name="cupon"
+                  defaultValue={coupon ?? ""}
+                  maxLength={30}
+                  autoComplete="off"
+                  autoCapitalize="characters"
+                  spellCheck={false}
+                  className="min-w-0 flex-1 font-mono uppercase"
+                />
+                <Button type="submit" variant="outline">
+                  Aplicar
+                </Button>
+              </div>
+              {notice.kind === "applied" ? (
+                <p
+                  role="status"
+                  className="flex items-start gap-2 rounded-md bg-success-tint px-3 py-2 text-sm font-medium text-success"
+                >
+                  <CircleCheck
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0"
+                  />
+                  {notice.text}
+                </p>
+              ) : null}
+              {notice.kind === "error" ? (
+                <p
+                  role="alert"
+                  className="flex items-start gap-1.5 text-sm font-medium text-danger-strong"
+                >
+                  <TriangleAlert
+                    aria-hidden="true"
+                    className="mt-0.5 size-4 shrink-0"
+                  />
+                  {notice.text}
+                </p>
+              ) : null}
+              {coupon ? (
+                <Link
+                  href="/tienda/carrito"
+                  className="inline-flex min-h-11 items-center self-start text-sm font-semibold text-ink underline underline-offset-4"
+                >
+                  Quitar cupón
+                </Link>
+              ) : null}
+            </form>
+
             <dl className="flex flex-col gap-1 text-sm tabular-nums">
               <div className="flex justify-between gap-4">
-                <dt className="text-ink-muted">Subtotal neto</dt>
-                <dd className="text-ink">
-                  {formatArs(summary.totals.subtotalNet)}
-                </dd>
+                <dt className="text-ink-muted">Subtotal</dt>
+                <dd className="text-ink">{formatArs(quote.gross_net)}</dd>
               </div>
+              {quote.discount_net > 0 ? (
+                <div className="flex justify-between gap-4">
+                  <dt className="text-ink-muted">Descuento cupón</dt>
+                  <dd className="text-ink">-{formatArs(quote.discount_net)}</dd>
+                </div>
+              ) : null}
               <div className="flex justify-between gap-4">
                 <dt className="text-ink-muted">IVA</dt>
-                <dd className="text-ink">
-                  {formatArs(summary.totals.vatTotal)}
-                </dd>
+                <dd className="text-ink">{formatArs(quote.vat_total)}</dd>
               </div>
               <div className="flex justify-between gap-4 border-t border-rule pt-2 text-lg font-bold">
                 <dt className="text-ink">Total</dt>
-                <dd className="text-ink">{formatArs(summary.totals.total)}</dd>
+                <dd className="text-ink">{formatArs(quote.total)}</dd>
               </div>
             </dl>
 
             {summary.missingToMinimum > 0 ? (
-              <p
-                role="status"
-                className="flex items-start gap-2 rounded-md bg-warning-tint px-3 py-2.5 text-sm font-medium text-warning"
-              >
-                <TriangleAlert
-                  aria-hidden="true"
-                  className="mt-0.5 size-4 shrink-0"
-                />
-                <span>
-                  Te faltan {formatArs(summary.missingToMinimum)} para el mínimo
-                  de compra ({formatArs(minOrder)} netos).
-                </span>
-              </p>
+              <WarningNote>
+                Te faltan {formatArs(summary.missingToMinimum)} para el mínimo
+                de compra ({formatArs(minOrder)} netos).
+              </WarningNote>
             ) : null}
-            {summary.hasIssues ? (
-              <p
-                role="status"
-                className="flex items-start gap-2 rounded-md bg-warning-tint px-3 py-2.5 text-sm font-medium text-warning"
-              >
-                <TriangleAlert
-                  aria-hidden="true"
-                  className="mt-0.5 size-4 shrink-0"
-                />
-                <span>
-                  Resolvé los avisos de arriba para poder confirmar el pedido.
-                </span>
-              </p>
+            {hasIssues ? (
+              <WarningNote>
+                Resolvé los avisos de arriba para poder confirmar el pedido.
+              </WarningNote>
+            ) : null}
+            {notice.kind === "error" ? (
+              <WarningNote>
+                Corregí o quitá el cupón para poder confirmar el pedido.
+              </WarningNote>
             ) : null}
 
             <form action={placeOrder} className="flex flex-col gap-4">
+              <CouponField coupon={coupon} />
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="note">Nota para el pedido (opcional)</Label>
                 <Textarea
