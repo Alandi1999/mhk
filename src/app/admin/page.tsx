@@ -15,13 +15,20 @@ const CATALOG_SECTIONS = [
     label: "Categorías",
     description: "Ordená el catálogo en categorías.",
   },
+  {
+    href: "/admin/stock",
+    label: "Stock",
+    description:
+      "Registrá ingresos, ajustes y devoluciones, y mirá el historial.",
+  },
+  {
+    href: "/admin/importar",
+    label: "Importar",
+    description: "Cargá productos o stock en bloque desde un archivo CSV.",
+  },
 ] as const;
 
-const UPCOMING = [
-  "Movimientos de stock",
-  "Precios y promociones",
-  "Pedidos y pagos",
-] as const;
+const UPCOMING = ["Precios y promociones", "Pedidos y pagos"] as const;
 
 export default async function AdminPage() {
   const pending = await getPendingClientCount();

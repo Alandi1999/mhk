@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { isValidSku, normalizeSku } from "./sku";
 import { grossPrice, parseArsAmount, VAT_RATES } from "./money";
 import { parseSearchQuery } from "./search";
-import { parseCsv } from "./csv";
+import { missingColumns, parseCsv } from "./csv";
 import { productInputSchema, parseProductRows } from "./schemas";
 
 describe("sku", () => {
@@ -108,5 +108,21 @@ describe("product CSV rows", () => {
     const res = parseProductRows(parseCsv(csv));
     expect(res.rows.map((r) => r.sku)).toEqual(["A1"]);
     expect(res.errors.map((e) => e.line)).toEqual([3, 4, 5]);
+  });
+});
+
+describe("csv header checks", () => {
+  it("lists the required columns the file lacks", () => {
+    const records = parseCsv("SKU;Nombre\nA1;Uno\n");
+    expect(missingColumns(records, ["sku", "nombre", "precio_neto"])).toEqual([
+      "precio_neto",
+    ]);
+    expect(missingColumns(records, ["sku"])).toEqual([]);
+  });
+  it("keeps line numbers on valid product rows", () => {
+    const res = parseProductRows(
+      parseCsv("sku;nombre;precio_neto\nA1;Uno;1\n"),
+    );
+    expect(res.rows[0]).toMatchObject({ sku: "A1", line: 2 });
   });
 });

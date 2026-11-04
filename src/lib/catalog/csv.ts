@@ -50,3 +50,15 @@ export function parseCsv(text: string): CsvRecord[] {
     Object.fromEntries(keys.map((k, i) => [k, (cells[i] ?? "").trim()])),
   );
 }
+
+export const MAX_CSV_BYTES = 2 * 1024 * 1024;
+export const MAX_CSV_ROWS = 5000;
+
+/** Required header names (lower case) the file does not have. */
+export function missingColumns(
+  records: CsvRecord[],
+  required: readonly string[],
+): string[] {
+  const present = new Set(Object.keys(records[0] ?? {}));
+  return required.filter((column) => !present.has(column));
+}

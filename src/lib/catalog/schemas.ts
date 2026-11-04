@@ -77,6 +77,9 @@ export type ProductInput = z.output<typeof productInputSchema>;
 
 export type RowError = { line: number; message: string };
 
+/** A valid CSV product with the spreadsheet line it came from. */
+export type ProductRow = ProductInput & { line: number };
+
 const CSV_COLUMNS = {
   sku: "sku",
   name: "nombre",
@@ -90,10 +93,10 @@ const CSV_COLUMNS = {
 
 /** `line` is the spreadsheet row (header = 1) assuming no blank lines. */
 export function parseProductRows(records: CsvRecord[]): {
-  rows: ProductInput[];
+  rows: ProductRow[];
   errors: RowError[];
 } {
-  const rows: ProductInput[] = [];
+  const rows: ProductRow[] = [];
   const errors: RowError[] = [];
   const seen = new Set<string>();
 
@@ -121,7 +124,7 @@ export function parseProductRows(records: CsvRecord[]): {
       return;
     }
     seen.add(parsed.data.sku);
-    rows.push(parsed.data);
+    rows.push({ ...parsed.data, line });
   });
 
   return { rows, errors };
