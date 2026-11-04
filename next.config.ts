@@ -10,6 +10,10 @@ const nextConfig: NextConfig = {
       },
     },
   },
+  experimental: {
+    // Product images go through a server action; the bucket allows 5 MB.
+    serverActions: { bodySizeLimit: "6mb" },
+  },
 };
 
 export default nextConfig;
