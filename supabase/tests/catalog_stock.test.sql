@@ -4,6 +4,14 @@ set local search_path = public, extensions;
 
 select plan(29);
 
+-- Start from an empty catalog: supabase/seed.sql loads sample products, and
+-- these assertions count rows. All of this rolls back with the transaction.
+alter table public.stock_movements disable trigger user;
+delete from public.stock_movements;
+delete from public.products;
+delete from public.categories;
+alter table public.stock_movements enable trigger user;
+
 -- Fixtures (as postgres, bypass RLS)
 insert into auth.users (id, instance_id, aud, role, email, raw_user_meta_data)
 values
