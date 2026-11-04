@@ -5,7 +5,8 @@ import { TAX_CONDITION_LABELS } from "@/lib/auth/schemas";
 import { formatCuit } from "@/lib/cuit";
 import { formatWait } from "@/lib/format/relative-wait";
 import type { Database } from "@/lib/supabase/database.types";
-import { approveClient, rejectClient } from "./actions";
+import { Select } from "@/components/ui/select";
+import { approveClient, assignPriceList, rejectClient } from "./actions";
 
 export type ClientRow = Pick<
   Database["public"]["Tables"]["profiles"]["Row"],
@@ -16,7 +17,10 @@ export type ClientRow = Pick<
   | "phone"
   | "status"
   | "created_at"
+  | "price_list_id"
 >;
+
+export type PriceListOption = { id: string; name: string };
 
 const dash = "-";
 
@@ -65,6 +69,45 @@ function RowActions({
   );
 }
 
+/** Small select + save per approved client; others have no list yet. */
+function PriceListForm({
+  client,
+  priceLists,
+  estado,
+}: {
+  client: ClientRow;
+  priceLists: PriceListOption[];
+  estado: string;
+}) {
+  if (client.status !== "approved") return <span>{dash}</span>;
+  const selectId = `price-list-${client.id}`;
+  return (
+    <form action={assignPriceList} className="flex items-center gap-2">
+      <input type="hidden" name="id" value={client.id} />
+      <input type="hidden" name="estado" value={estado} />
+      <label htmlFor={selectId} className="sr-only">
+        Lista de precios de {client.razon_social ?? "este cliente"}
+      </label>
+      <Select
+        id={selectId}
+        name="price_list_id"
+        defaultValue={client.price_list_id ?? ""}
+        className="min-w-0 flex-1"
+      >
+        <option value="">Sin lista (precio base)</option>
+        {priceLists.map((l) => (
+          <option key={l.id} value={l.id}>
+            {l.name}
+          </option>
+        ))}
+      </Select>
+      <Button type="submit" size="sm" variant="outline">
+        Guardar
+      </Button>
+    </form>
+  );
+}
+
 const th =
   "sticky top-0 z-10 bg-surface-2 px-4 py-3 text-xs font-bold tracking-wide text-ink-muted uppercase";
 const td = "px-4 py-3 align-middle";
@@ -80,6 +123,7 @@ export function ClientList({
   adminId,
   estado,
   now,
+  priceLists,
 }: {
   clients: ClientRow[];
   caption: string;
@@ -87,6 +131,7 @@ export function ClientList({
   estado: AccountStatus;
   /** Reference time for the "Esperando" column; computed on the server. */
   now: Date;
+  priceLists: PriceListOption[];
 }) {
   const pendingView = estado === "pending";
   return (
@@ -110,6 +155,9 @@ export function ClientList({
               </th>
               <th scope="col" className={th}>
                 Alta
+              </th>
+              <th scope="col" className={th}>
+                Lista de precios
               </th>
               <th scope="col" className={th}>
                 {pendingView ? "Esperando" : "Estado"}
@@ -138,6 +186,13 @@ export function ClientList({
                   <time dateTime={c.created_at}>
                     {formatDate(c.created_at)}
                   </time>
+                </td>
+                <td className={`${td} min-w-64`}>
+                  <PriceListForm
+                    client={c}
+                    priceLists={priceLists}
+                    estado={estado}
+                  />
                 </td>
                 <td className={`${td} whitespace-nowrap`}>
                   {pendingView ? (
@@ -184,6 +239,13 @@ export function ClientList({
                 <time dateTime={c.created_at}>{formatDate(c.created_at)}</time>
               </dd>
             </dl>
+            {c.status === "approved" ? (
+              <PriceListForm
+                client={c}
+                priceLists={priceLists}
+                estado={estado}
+              />
+            ) : null}
             <RowActions client={c} adminId={adminId} estado={estado} />
           </li>
         ))}

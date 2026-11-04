@@ -89,3 +89,12 @@ insert into public.stock_movements (product_id, delta, reason, note) values
   ('b0b0b0b0-0000-4000-8000-000000000005', 120, 'initial', 'Stock inicial de ejemplo'),
   ('b0b0b0b0-0000-4000-8000-000000000006', 60, 'initial', 'Stock inicial de ejemplo'),
   ('b0b0b0b0-0000-4000-8000-000000000007', 3, 'initial', 'Stock inicial de ejemplo');
+
+-- Sample price lists. They are not assigned to any seed user.
+insert into public.price_lists (id, name, discount_pct) values
+  ('a1a1a1a1-0000-4000-8000-000000000001', 'Talleres (ejemplo)', 10),
+  ('a1a1a1a1-0000-4000-8000-000000000002', 'Mayoristas (ejemplo)', 15);
+
+insert into public.price_list_items (price_list_id, product_id, price) values
+  ('a1a1a1a1-0000-4000-8000-000000000001', 'b0b0b0b0-0000-4000-8000-000000000005', 2800.00),
+  ('a1a1a1a1-0000-4000-8000-000000000002', 'b0b0b0b0-0000-4000-8000-000000000003', 38000.00);

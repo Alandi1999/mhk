@@ -26,9 +26,15 @@ const CATALOG_SECTIONS = [
     label: "Importar",
     description: "Cargá productos o stock en bloque desde un archivo CSV.",
   },
+  {
+    href: "/admin/listas-de-precios",
+    label: "Listas de precios",
+    description:
+      "Descuentos por porcentaje y precios puntuales para cada tipo de cliente.",
+  },
 ] as const;
 
-const UPCOMING = ["Precios y promociones", "Pedidos y pagos"] as const;
+const UPCOMING = ["Pedidos y pagos"] as const;
 
 export default async function AdminPage() {
   const pending = await getPendingClientCount();

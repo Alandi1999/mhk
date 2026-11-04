@@ -19,6 +19,11 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
           { href: "/admin/stock", label: "Stock", prefix: true },
           { href: "/admin/importar", label: "Importar", prefix: true },
           {
+            href: "/admin/listas-de-precios",
+            label: "Listas de precios",
+            prefix: true,
+          },
+          {
             href: "/admin/clientes",
             label: "Clientes",
             prefix: true,
