@@ -26,6 +26,8 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
             label: "Listas de precios",
             prefix: true,
           },
+          { href: "/admin/promociones", label: "Promociones", prefix: true },
+          { href: "/admin/cupones", label: "Cupones", prefix: true },
           {
             href: "/admin/clientes",
             label: "Clientes",
