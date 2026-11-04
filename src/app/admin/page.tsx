@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { CountBadge } from "@/components/shell/count-badge";
 import { PageContainer } from "@/components/shell/page-container";
-import { getPendingClientCount } from "./pending-count";
+import { getPendingClientCount, getPendingOrderCount } from "./pending-count";
 
 const CATALOG_SECTIONS = [
   {
@@ -32,16 +32,24 @@ const CATALOG_SECTIONS = [
     description:
       "Descuentos por porcentaje y precios puntuales para cada tipo de cliente.",
   },
+  {
+    href: "/admin/configuracion",
+    label: "Configuración",
+    description: "Monto mínimo de compra para los pedidos.",
+  },
 ] as const;
 
-const UPCOMING = ["Pedidos y pagos"] as const;
+const UPCOMING = ["Pagos y envíos"] as const;
 
 export default async function AdminPage() {
-  const pending = await getPendingClientCount();
+  const [pending, pendingOrders] = await Promise.all([
+    getPendingClientCount(),
+    getPendingOrderCount(),
+  ]);
   return (
     <PageContainer
       title="Panel de administración"
-      description="Gestioná las altas de clientes y el catálogo. El resto de las áreas se suma en próximas etapas."
+      description="Gestioná las altas de clientes, el catálogo y los pedidos. El resto de las áreas se suma en próximas etapas."
     >
       <ul className="divide-y divide-rule border-y border-rule">
         <li>
@@ -59,6 +67,24 @@ export default async function AdminPage() {
             </span>
             <span className="col-span-2 text-sm text-ink-muted md:order-2 md:col-span-1">
               Aprobá o rechazá las altas de comercios.
+            </span>
+          </Link>
+        </li>
+        <li>
+          <Link
+            href="/admin/pedidos"
+            className="group grid min-h-14 grid-cols-[1fr_auto] items-center gap-x-4 gap-y-1 px-2 py-3 hover:bg-surface md:grid-cols-[14rem_1fr_auto]"
+          >
+            <span className="font-semibold text-ink">Pedidos</span>
+            <span className="flex items-center justify-end gap-3 md:order-3">
+              <CountBadge count={pendingOrders} showLabel />
+              <ChevronRight
+                aria-hidden="true"
+                className="size-5 text-ink-muted transition-transform duration-150 group-hover:translate-x-0.5"
+              />
+            </span>
+            <span className="col-span-2 text-sm text-ink-muted md:order-2 md:col-span-1">
+              Mirá los pedidos, avanzá su estado o cancelalos.
             </span>
           </Link>
         </li>
