@@ -19,7 +19,7 @@ Mirror: Engram topic `odd/fase2-catalogo-stock/tasks` (project mhk). Mirror stat
 - [x] T3 (S5) Admin categories and products CRUD + image upload. Route: delegated direct writer (trigger: 2+ non-trivial files, ~25 files). Evidence: 140 unit tests, 53 pgTAP, lint/typecheck/build/format ok; admin flows replayed over HTTP (CRUD, dup SKU, compat, image upload, category-in-use block, non-admin redirected). Not verified: screenshots, mobile 375px. Seed now loads 3 categories + 8 products; catalog_stock pgTAP test clears the catalog inside its rolled-back transaction. Risk: item 2 (admin writes under RLS, storage upload).
 - [ ] T4 (S4,S5) Admin stock: record movements, history per product.
 - [ ] T5 (S2,S5) Admin CSV import (products, stock adjustments) with row-level error report.
-- [ ] T6 (S1,S5,S6) Tienda catalog: search by SKU/name/compatibility, listing, product detail.
+- [x] T6 (S1,S5,S6) Tienda catalog: search by SKU/name/compatibility, listing, product detail. Route: delegated direct writer (parallel with T4+T5, disjoint surfaces). Evidence: RED observed, 166 unit tests (full tree), 53 pgTAP, lint/typecheck/build/format ok; browser run as approved cliente (SKU, name, moto model, category, pagination, detail, 404s, inactive hidden, no stock quantity in HTML, pending blocked, no overflow at 375/1440). Not verified: real image thumbnails, 44px targets measured, admin redirect. Limit: compat match capped at 200 ids per term. Risk: none.
 
 ## Log
 

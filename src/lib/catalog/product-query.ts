@@ -15,7 +15,7 @@ export function pageRange(page: number): { from: number; to: number } {
   return { from, to: from + PAGE_SIZE - 1 };
 }
 
-function quote(pattern: string): string {
+export function quote(pattern: string): string {
   // PostgREST double-quoted value: escape backslashes and quotes.
   return `"${pattern.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
 }
