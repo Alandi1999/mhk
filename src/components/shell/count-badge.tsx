@@ -9,16 +9,19 @@ export function CountBadge({
   count,
   tone = "light",
   showLabel = false,
+  noun = ["pendiente", "pendientes"],
   className,
 }: {
   count: number;
   tone?: "light" | "band";
   /** Show "3 pendientes" instead of just the number. */
   showLabel?: boolean;
+  /** Singular and plural for the accessible name (default: pendiente). */
+  noun?: readonly [string, string];
   className?: string;
 }) {
   if (count <= 0) return null;
-  const name = `${count} ${count === 1 ? "pendiente" : "pendientes"}`;
+  const name = `${count} ${count === 1 ? noun[0] : noun[1]}`;
   return (
     <span
       className={cn(

@@ -44,7 +44,7 @@ export function BrandHeader({
 
         <div
           className={cn(
-            "-mx-3 mt-2 w-full md:order-2 md:mx-0 md:mt-0 md:w-auto md:flex-1 md:pl-4",
+            "-mx-3 mt-2 w-full md:order-2 md:mx-0 md:mt-0 md:w-auto md:min-w-0 md:flex-1 md:pl-4",
             // A lone destination does not earn a second header row on mobile.
             singleItem && "max-md:hidden",
           )}

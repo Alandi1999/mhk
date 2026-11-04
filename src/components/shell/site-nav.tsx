@@ -12,6 +12,8 @@ export interface NavItem {
   prefix?: boolean;
   /** Pending-work count shown next to the label. */
   count?: number;
+  /** Singular and plural for the count's accessible name. */
+  countNoun?: readonly [string, string];
 }
 
 export function isActive(pathname: string, item: NavItem): boolean {
@@ -26,8 +28,8 @@ export function SiteNav({ label, items }: { label: string; items: NavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <nav aria-label={label}>
-      <ul className="flex items-center gap-1">
+    <nav aria-label={label} className="overflow-x-auto overscroll-x-contain">
+      <ul className="flex w-max items-center gap-1">
         {items.map((item) => {
           const active = isActive(pathname, item);
           return (
@@ -44,7 +46,12 @@ export function SiteNav({ label, items }: { label: string; items: NavItem[] }) {
               >
                 {item.label}
                 {item.count ? (
-                  <CountBadge count={item.count} tone="band" className="ml-2" />
+                  <CountBadge
+                    count={item.count}
+                    tone="band"
+                    noun={item.countNoun}
+                    className="ml-2"
+                  />
                 ) : null}
                 {active ? (
                   <span
