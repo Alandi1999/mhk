@@ -34,6 +34,50 @@ export type Database = {
   };
   public: {
     Tables: {
+      cart_items: {
+        Row: {
+          product_id: string;
+          quantity: number;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          product_id: string;
+          quantity: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          product_id?: string;
+          quantity?: number;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "catalog_products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cart_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "cart_items_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       categories: {
         Row: {
           created_at: string;
@@ -55,6 +99,174 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      order_events: {
+        Row: {
+          actor: string | null;
+          created_at: string;
+          id: number;
+          note: string | null;
+          order_id: string;
+          status: Database["public"]["Enums"]["order_status"];
+        };
+        ComputedFields: never;
+        Insert: {
+          actor?: string | null;
+          created_at?: string;
+          id?: never;
+          note?: string | null;
+          order_id: string;
+          status: Database["public"]["Enums"]["order_status"];
+        };
+        Update: {
+          actor?: string | null;
+          created_at?: string;
+          id?: never;
+          note?: string | null;
+          order_id?: string;
+          status?: Database["public"]["Enums"]["order_status"];
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_events_actor_fkey";
+            columns: ["actor"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_events_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      order_items: {
+        Row: {
+          id: string;
+          line_net: number;
+          name: string;
+          order_id: string;
+          product_id: string;
+          quantity: number;
+          sku: string;
+          unit_price_net: number;
+          vat_rate: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          id?: string;
+          line_net: number;
+          name: string;
+          order_id: string;
+          product_id: string;
+          quantity: number;
+          sku: string;
+          unit_price_net: number;
+          vat_rate: number;
+        };
+        Update: {
+          id?: string;
+          line_net?: number;
+          name?: string;
+          order_id?: string;
+          product_id?: string;
+          quantity?: number;
+          sku?: string;
+          unit_price_net?: number;
+          vat_rate?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "catalog_products";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey";
+            columns: ["product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      orders: {
+        Row: {
+          cancel_reason: string | null;
+          cancelled_at: string | null;
+          created_at: string;
+          customer_cuit: string | null;
+          customer_id: string;
+          customer_razon_social: string;
+          customer_tax_condition:
+            Database["public"]["Enums"]["tax_condition"] | null;
+          id: string;
+          note: string | null;
+          number: number;
+          status: Database["public"]["Enums"]["order_status"];
+          subtotal_net: number;
+          total: number;
+          updated_at: string;
+          vat_total: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          cancel_reason?: string | null;
+          cancelled_at?: string | null;
+          created_at?: string;
+          customer_cuit?: string | null;
+          customer_id: string;
+          customer_razon_social: string;
+          customer_tax_condition?:
+            Database["public"]["Enums"]["tax_condition"] | null;
+          id?: string;
+          note?: string | null;
+          number?: never;
+          status?: Database["public"]["Enums"]["order_status"];
+          subtotal_net: number;
+          total: number;
+          updated_at?: string;
+          vat_total: number;
+        };
+        Update: {
+          cancel_reason?: string | null;
+          cancelled_at?: string | null;
+          created_at?: string;
+          customer_cuit?: string | null;
+          customer_id?: string;
+          customer_razon_social?: string;
+          customer_tax_condition?:
+            Database["public"]["Enums"]["tax_condition"] | null;
+          id?: string;
+          note?: string | null;
+          number?: never;
+          status?: Database["public"]["Enums"]["order_status"];
+          subtotal_net?: number;
+          total?: number;
+          updated_at?: string;
+          vat_total?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "orders_customer_id_fkey";
+            columns: ["customer_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       price_list_items: {
         Row: {
@@ -310,6 +522,25 @@ export type Database = {
           },
         ];
       };
+      settings: {
+        Row: {
+          id: boolean;
+          min_order_net: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          id?: boolean;
+          min_order_net?: number;
+          updated_at?: string;
+        };
+        Update: {
+          id?: boolean;
+          min_order_net?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
       stock_movements: {
         Row: {
           created_at: string;
@@ -317,6 +548,7 @@ export type Database = {
           delta: number;
           id: number;
           note: string | null;
+          order_id: string | null;
           product_id: string;
           reason: Database["public"]["Enums"]["stock_reason"];
         };
@@ -327,6 +559,7 @@ export type Database = {
           delta: number;
           id?: never;
           note?: string | null;
+          order_id?: string | null;
           product_id: string;
           reason: Database["public"]["Enums"]["stock_reason"];
         };
@@ -336,6 +569,7 @@ export type Database = {
           delta?: number;
           id?: never;
           note?: string | null;
+          order_id?: string | null;
           product_id?: string;
           reason?: Database["public"]["Enums"]["stock_reason"];
         };
@@ -345,6 +579,13 @@ export type Database = {
             columns: ["created_by"];
             isOneToOne: false;
             referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "stock_movements_order_id_fkey";
+            columns: ["order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
             referencedColumns: ["id"];
           },
           {
@@ -390,16 +631,39 @@ export type Database = {
       };
     };
     Functions: {
+      admin_set_order_status: {
+        Args: {
+          p_order_id: string;
+          p_status: Database["public"]["Enums"]["order_status"];
+        };
+        Returns: undefined;
+      };
+      cancel_order: {
+        Args: { p_order_id: string; p_reason?: string };
+        Returns: undefined;
+      };
+      effective_price: {
+        Args: { p_product_id: string; p_user_id: string };
+        Returns: number;
+      };
       is_admin: { Args: Record<PropertyKey, never>; Returns: boolean };
       is_approved_client: {
         Args: Record<PropertyKey, never>;
         Returns: boolean;
       };
       is_valid_cuit: { Args: { p_cuit: string }; Returns: boolean };
+      place_order: { Args: { p_note?: string }; Returns: string };
       product_is_visible: { Args: { p_product_id: string }; Returns: boolean };
     };
     Enums: {
       account_status: "pending" | "approved" | "rejected";
+      order_status:
+        | "pending"
+        | "confirmed"
+        | "preparing"
+        | "shipped"
+        | "delivered"
+        | "cancelled";
       stock_reason:
         | "initial"
         | "purchase"
@@ -540,6 +804,14 @@ export const Constants = {
   public: {
     Enums: {
       account_status: ["pending", "approved", "rejected"],
+      order_status: [
+        "pending",
+        "confirmed",
+        "preparing",
+        "shipped",
+        "delivered",
+        "cancelled",
+      ],
       stock_reason: [
         "initial",
         "purchase",
