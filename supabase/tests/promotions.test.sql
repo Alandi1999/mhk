@@ -2,7 +2,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set local search_path = public, extensions;
 
-select plan(32);
+select plan(35);
 
 -- Start from an empty catalog (the seed loads samples); rolled back with the test.
 alter table public.stock_movements disable trigger user;
@@ -50,6 +50,9 @@ insert into public.promotions (name, discount_pct, product_id, starts_at) values
 -- Volume: 30% from 10 units on P-3
 insert into public.promotions (name, discount_pct, product_id, min_qty) values ('Volumen 10', 30, '00000000-0000-4000-8000-000000000f03', 10);
 
+-- Audience-restricted volume rule: only Lista A may see or use it
+insert into public.promotions (name, discount_pct, product_id, min_qty, price_list_id) values ('VIP secreto', 60, '00000000-0000-4000-8000-000000000f01', 7, '00000000-0000-4000-8000-0000000000e1');
+
 insert into public.coupons (code, discount_pct, min_order_net, max_uses) values
   ('DIEZ', 10, 0, null),
   ('GRANDE', 10, 100000, null),
@@ -80,6 +83,8 @@ insert into public.cart_items (product_id, quantity) select id, 9 from public.ca
 select is((public.cart_quote()->'lines'->0->>'unit_price')::numeric, 95.00, 'con 9 unidades todavia no aplica el escalon');
 delete from public.cart_items;
 
+select is((select count(*)::int from public.product_volume_tiers((select id from public.catalog_products where sku = 'P-1')) where rule_name = 'VIP secreto'), 0, 'un escalon de otra lista no se muestra ni se nombra');
+
 -- Privileges
 select is((select count(*)::int from public.promotions), 0, 'cliente no lee promociones');
 select is((select count(*)::int from public.coupons), 0, 'cliente no lee cupones');
@@ -94,6 +99,8 @@ select throws_ok($$select public.cart_quote()$$, '42501', null, 'cliente pendien
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-4000-8000-0000000000b2","role":"authenticated"}', true);
 insert into public.cart_items (product_id, quantity) select id, 2 from public.catalog_products where sku = 'P-1';
 select is(public.cart_quote('diez')->'coupon'->>'error', null, 'cupon valido (sin importar mayusculas)');
+select is(public.cart_quote(E'\tdiez\n')->'coupon'->>'error', null, 'el cupon tolera tabs y saltos de linea pegados');
+select is((select price from public.product_volume_tiers((select id from public.catalog_products where sku = 'P-1')) where min_qty = 7), 400.00, 'el cliente de la lista ve su escalon (60% sobre la base)');
 select is((public.cart_quote('DIEZ')->>'discount_net')::numeric, 160.00, 'descuento del cupon = 10% de 1600');
 select is(public.cart_quote('NOEXISTE')->'coupon'->>'error', 'MH007', 'cupon inexistente');
 select is(public.cart_quote('VENCIDO')->'coupon'->>'error', 'MH007', 'cupon vencido');

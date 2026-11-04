@@ -144,8 +144,8 @@ begin
       'rule_name', r.rule_name, 'line_net', v_line);
   end loop;
 
-  if p_coupon is not null and btrim(p_coupon) <> '' then
-    v_code := upper(btrim(p_coupon));
+  if p_coupon is not null and regexp_replace(p_coupon, '\s', '', 'g') <> '' then
+    v_code := upper(regexp_replace(p_coupon, '\s', '', 'g'));
     select * into v_coupon from public.coupons where code = v_code;
     if not found
        or not v_coupon.active
@@ -195,7 +195,9 @@ begin
 end;
 $$;
 
--- Volume tiers a client can reach on one product (better than their current price).
+-- Volume tiers a client can reach on one product: only rules that apply to the
+-- caller's audience, priced by the real best-price rule at that quantity, and
+-- only tiers that beat both the quantity-1 price and the previous tier.
 create function public.product_volume_tiers(p_product_id uuid)
 returns table (min_qty integer, price numeric, rule_name text)
 language plpgsql
@@ -203,27 +205,37 @@ stable
 security definer
 set search_path = ''
 as $$
+declare
+  v_uid uuid := (select auth.uid());
+  v_list uuid;
+  v_base numeric;
 begin
-  if (select auth.uid()) is null or not public.is_approved_client() then
+  if v_uid is null or not public.is_approved_client() then
     raise exception 'only approved clients can read tiers' using errcode = '42501';
   end if;
+  select price_list_id into v_list from public.profiles where id = v_uid;
+  select b.price into v_base from public.price_breakdown(p_product_id, v_uid, 1) b;
+
   return query
     select t.min_qty, t.price, t.rule_name
     from (
-      select pm.min_qty, b.price, pm.name as rule_name,
-             row_number() over (partition by pm.min_qty order by b.price) as rn
-      from public.promotions pm
-      cross join lateral public.price_breakdown(p_product_id, (select auth.uid()), pm.min_qty) b
-      join public.products p on p.id = p_product_id and p.active
-      where pm.min_qty > 1
-        and pm.active
-        and (pm.starts_at is null or pm.starts_at <= now())
-        and (pm.ends_at is null or pm.ends_at > now())
-        and (pm.product_id is null and pm.category_id is null
-             or pm.product_id = p.id or pm.category_id = p.category_id)
-        and b.price < b.list_price
+      select q.min_qty, b.price, b.rule_name,
+             min(b.price) over (order by q.min_qty rows between unbounded preceding and 1 preceding) as prev_best
+      from (
+        select distinct pm.min_qty
+        from public.promotions pm
+        join public.products p on p.id = p_product_id and p.active
+        where pm.min_qty > 1
+          and pm.active
+          and (pm.starts_at is null or pm.starts_at <= now())
+          and (pm.ends_at is null or pm.ends_at > now())
+          and (pm.price_list_id is null or pm.price_list_id = v_list)
+          and ((pm.product_id is null and pm.category_id is null)
+               or pm.product_id = p.id or pm.category_id = p.category_id)
+      ) q
+      cross join lateral public.price_breakdown(p_product_id, v_uid, q.min_qty) b
     ) t
-    where t.rn = 1
+    where t.price < v_base and (t.prev_best is null or t.price < t.prev_best)
     order by t.min_qty;
 end;
 $$;
@@ -263,8 +275,8 @@ begin
   end if;
 
   -- Lock order: coupon first, then products by id (no deadlocks between orders).
-  if p_coupon is not null and btrim(p_coupon) <> '' then
-    perform 1 from public.coupons where code = upper(btrim(p_coupon)) for update;
+  if p_coupon is not null and regexp_replace(p_coupon, '\s', '', 'g') <> '' then
+    perform 1 from public.coupons where code = upper(regexp_replace(p_coupon, '\s', '', 'g')) for update;
   end if;
   perform 1
     from public.products p
@@ -356,6 +368,11 @@ begin
     or (v_is_admin and v_order.status in ('confirmed', 'preparing'))
   ) then
     raise exception 'the order cannot be cancelled in status %', v_order.status using errcode = 'MH005';
+  end if;
+
+  -- Lock order: coupon before products, as place_order does (avoids deadlocks).
+  if v_order.coupon_code is not null then
+    perform 1 from public.coupons where code = v_order.coupon_code for update;
   end if;
 
   insert into public.stock_movements (product_id, delta, reason, note, order_id, created_by)
